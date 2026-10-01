@@ -16,13 +16,23 @@ export class ShipShape {
 
   /** Verilen uzunlukta, yatay düz bir gemi. */
   static straight(length: number): ShipShape {
-    const cells = Array.from({ length }, (_, column) => new Position(0, column));
+    const cells = Array.from(
+      { length },
+      (_, column) => new Position(0, column),
+    );
     return new ShipShape(cells);
   }
 
   /** Geminin kare sayısı. */
   get length(): number {
     return this.cells.length;
+  }
+
+  /** Şeklin saat yönünde 90 derece döndürülmüş hali. Kendisi değişmez. */
+  rotatedClockwise(): ShipShape {
+    return new ShipShape(
+      this.cells.map((cell) => new Position(cell.column, -cell.row)),
+    );
   }
 }
 

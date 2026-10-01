@@ -35,4 +35,64 @@ describe("ShipShape", () => {
   it("karesiz gemi olmaz", () => {
     expect(() => new ShipShape([])).toThrow();
   });
-});
+
+  it("karesiz gemi olmaz", () => {
+    expect(() => new ShipShape([])).toThrow();
+  }); // ← son it burada biter
+
+  describe("rotatedClockwise", () => {
+    // ← yeni grup, eski describe'ın içinde
+    const tShape = () =>
+      new ShipShape([
+        new Position(0, 0),
+        new Position(1, 0),
+        new Position(2, 0),
+        new Position(1, 1),
+      ]);
+
+    it("yatay düz gemi dikey olur", () => {
+      const rotated = ShipShape.straight(3).rotatedClockwise();
+
+      expect(toCoordinates(rotated.cells)).toEqual(["0,0", "1,0", "2,0"]);
+    });
+
+    it("düz gemi iki kez dönünce yine yatay olur", () => {
+      const rotated = ShipShape.straight(3)
+        .rotatedClockwise()
+        .rotatedClockwise();
+
+      expect(toCoordinates(rotated.cells)).toEqual(["0,0", "0,1", "0,2"]);
+    });
+
+    it("T şekli saat yönünde dönünce kolu aşağı bakar", () => {
+      const rotated = tShape().rotatedClockwise();
+
+      expect(toCoordinates(rotated.cells)).toEqual([
+        "0,0",
+        "0,1",
+        "0,2",
+        "1,1",
+      ]);
+    });
+
+    it("dört kez dönünce başlangıç şekline geri gelir", () => {
+      const rotated = tShape()
+        .rotatedClockwise()
+        .rotatedClockwise()
+        .rotatedClockwise()
+        .rotatedClockwise();
+
+      expect(toCoordinates(rotated.cells)).toEqual(
+        toCoordinates(tShape().cells),
+      );
+    });
+
+    it("döndürmek asıl şekli değiştirmez", () => {
+      const original = ShipShape.straight(3);
+
+      original.rotatedClockwise();
+
+      expect(toCoordinates(original.cells)).toEqual(["0,0", "0,1", "0,2"]);
+    });
+  });
+}); // ← ana describe burada biter
