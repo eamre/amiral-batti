@@ -23,9 +23,9 @@ export class Board {
       for (let columnDelta = -1; columnDelta <= 1; columnDelta++) {
         const isPositionItself = rowDelta === 0 && columnDelta === 0;
         if (isPositionItself) continue;
-        
+
         const neighbor = position.offsetBy(rowDelta, columnDelta);
-       
+
         if (this.contains(neighbor)) {
           neighbors.push(neighbor);
         }
