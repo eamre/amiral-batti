@@ -1,5 +1,6 @@
 import { BOARD_SIZE } from "./constants";
 import { Position } from "./Position";
+import { Ship } from "./Ship";
 
 /** Kare şeklindeki oyun tahtası. Hangi konumların tahtanın içinde olduğunu bilir. */
 export class Board {
@@ -13,6 +14,10 @@ export class Board {
       position.column >= 0 &&
       position.column < this.size
     );
+  }
+
+  containsShip(ship: Ship): boolean {
+    return ship.cells.every((cell) => this.contains(cell));
   }
 
   /** Bu konumun tahta içindeki komşuları (çaprazlar dahil, en fazla 8 tane). */

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { Board } from "../../src/domain/Board";
 import { Position } from "../../src/domain/Position";
+import { ShipShape } from "../../src/domain/ShipShape";
+import { Ship } from "../../src/domain/Ship";
 
 describe("Board.contains", () => {
   const board = new Board(10);
@@ -60,5 +62,21 @@ describe("Board.neighborsOf", () => {
     const neighbors = board.neighborsOf(new Position(1, 1));
 
     expect(neighbors.some((n) => n.equals(new Position(1, 1)))).toBe(false);
+  });
+});
+
+describe("Board.containsShip", () => {
+  it("returns true when every cell of the ship is on the board", () => {
+    const board = new Board(3);
+    const ship = new Ship(ShipShape.straight(2), new Position(0, 0));
+
+    expect(board.containsShip(ship)).toBe(true);
+  });
+
+  it("returns false when part of the ship sticks out of the board", () => {
+    const board = new Board(3);
+    const ship = new Ship(ShipShape.straight(2), new Position(0, 2));
+
+    expect(board.containsShip(ship)).toBe(false);
   });
 });
