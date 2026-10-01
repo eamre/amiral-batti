@@ -26,3 +26,39 @@ describe("Board.contains", () => {
     expect(board.contains(new Position(3, 10))).toBe(false);
   });
 });
+
+describe("Board.neighborsOf", () => {
+  const board = new Board(3);
+
+  /** Konumları "satır,sütun" yazısına çevirip sıralar; böylece sıraya bakmadan karşılaştırabiliriz. */
+  const toCoordinates = (positions: Position[]) =>
+    positions.map((p) => `${p.row},${p.column}`).sort();
+
+  it("ortadaki karenin 8 komşusu vardır", () => {
+    const neighbors = board.neighborsOf(new Position(1, 1));
+
+    expect(toCoordinates(neighbors)).toEqual([
+      "0,0", "0,1", "0,2",
+      "1,0",        "1,2",
+      "2,0", "2,1", "2,2",
+    ]);
+  });
+
+  it("köşedeki karenin 3 komşusu vardır", () => {
+    const neighbors = board.neighborsOf(new Position(0, 0));
+
+    expect(toCoordinates(neighbors)).toEqual(["0,1", "1,0", "1,1"]);
+  });
+
+  it("kenardaki karenin 5 komşusu vardır", () => {
+    const neighbors = board.neighborsOf(new Position(0, 1));
+
+    expect(toCoordinates(neighbors)).toEqual(["0,0", "0,2", "1,0", "1,1", "1,2"]);
+  });
+
+  it("karenin kendisi komşuları arasında değildir", () => {
+    const neighbors = board.neighborsOf(new Position(1, 1));
+
+    expect(neighbors.some((n) => n.equals(new Position(1, 1)))).toBe(false);
+  });
+});
