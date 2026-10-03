@@ -19,6 +19,10 @@ export class Fleet {
     return this.ships.every((ship) => this.isSunk(ship));
   }
 
+  get sunkShips(): Ship[] {
+    return this.ships.filter((ship) => this.isSunk(ship));
+  }
+
   receiveShot(position: Position): ShotResult {
     const fleet = this.hasReceivedShotAt(position)
       ? this

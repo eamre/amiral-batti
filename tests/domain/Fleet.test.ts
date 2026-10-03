@@ -5,7 +5,10 @@ import { Ship } from "../../src/domain/Ship";
 import { ShipShape } from "../../src/domain/ShipShape";
 
 function shootAll(fleet: Fleet, positions: Position[]): Fleet {
-  return positions.reduce((current, position) => current.receiveShot(position).fleet, fleet);
+  return positions.reduce(
+    (current, position) => current.receiveShot(position).fleet,
+    fleet,
+  );
 }
 
 describe("Fleet", () => {
@@ -65,7 +68,10 @@ describe("Fleet", () => {
     });
 
     it("reports sunk and names the ship when its last cell is hit", () => {
-      const fleet = shootAll(new Fleet([cruiser]), [new Position(1, 1), new Position(1, 2)]);
+      const fleet = shootAll(new Fleet([cruiser]), [
+        new Position(1, 1),
+        new Position(1, 2),
+      ]);
 
       const result = fleet.receiveShot(new Position(1, 3));
 
@@ -80,7 +86,11 @@ describe("Fleet", () => {
     });
 
     it("is false while one ship is still afloat", () => {
-      const cruiserSunk = [new Position(1, 1), new Position(1, 2), new Position(1, 3)];
+      const cruiserSunk = [
+        new Position(1, 1),
+        new Position(1, 2),
+        new Position(1, 3),
+      ];
 
       const fleet = shootAll(new Fleet([cruiser, boat]), cruiserSunk);
 
@@ -104,13 +114,38 @@ describe("Fleet", () => {
 
   describe("hasReceivedShotAt", () => {
     it("is false for a position that was never shot", () => {
-      expect(new Fleet([cruiser]).hasReceivedShotAt(new Position(0, 0))).toBe(false);
+      expect(new Fleet([cruiser]).hasReceivedShotAt(new Position(0, 0))).toBe(
+        false,
+      );
     });
 
     it("is true for a position that was shot", () => {
       const fleet = shootAll(new Fleet([cruiser]), [new Position(0, 0)]);
 
       expect(fleet.hasReceivedShotAt(new Position(0, 0))).toBe(true);
+    });
+  });
+  describe("sunkShips", () => {
+    it("is empty at the start", () => {
+      expect(new Fleet([cruiser, boat]).sunkShips).toEqual([]);
+    });
+
+    it("lists a ship once all its cells were hit", () => {
+      const cruiserSunk = [
+        new Position(1, 1),
+        new Position(1, 2),
+        new Position(1, 3),
+      ];
+
+      const fleet = shootAll(new Fleet([cruiser, boat]), cruiserSunk);
+
+      expect(fleet.sunkShips).toEqual([cruiser]);
+    });
+
+    it("does not list a ship that is only damaged", () => {
+      const fleet = shootAll(new Fleet([cruiser, boat]), [new Position(1, 1)]);
+
+      expect(fleet.sunkShips).toEqual([]);
     });
   });
 });

@@ -114,3 +114,42 @@ describe("Board.pulledInside", () => {
     expect(board.pulledInside(ship).origin).toEqual(new Position(1, 2));
   });
 });
+
+describe("Board.surroundingsOf", () => {
+  it("returns every cell around the ship, diagonals included, but not the ship itself", () => {
+    const board = new Board(5);
+    const ship = new Ship(ShipShape.straight(2), new Position(1, 1));
+
+    const surroundings = board.surroundingsOf(ship);
+
+    expect(surroundings).toHaveLength(10);
+    expect(surroundings).toContainEqual(new Position(0, 0));
+    expect(surroundings).toContainEqual(new Position(2, 3));
+    expect(surroundings).not.toContainEqual(new Position(1, 1));
+    expect(surroundings).not.toContainEqual(new Position(1, 2));
+  });
+
+  it("leaves out cells that are outside the board", () => {
+    const board = new Board(5);
+    const ship = new Ship(ShipShape.straight(2), new Position(0, 0));
+
+    expect(board.surroundingsOf(ship)).toHaveLength(4);
+  });
+});
+
+describe("Board.positions", () => {
+  it("returns every cell of the board once, row by row", () => {
+    const board = new Board(2);
+
+    expect(board.positions()).toEqual([
+      new Position(0, 0),
+      new Position(0, 1),
+      new Position(1, 0),
+      new Position(1, 1),
+    ]);
+  });
+
+  it("returns size times size cells", () => {
+    expect(new Board(10).positions()).toHaveLength(100);
+  });
+});

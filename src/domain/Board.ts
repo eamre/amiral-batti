@@ -16,8 +16,38 @@ export class Board {
     );
   }
 
+  positions(): Position[] {
+    const positions: Position[] = [];
+
+    for (let row = 0; row < this.size; row++) {
+      for (let column = 0; column < this.size; column++) {
+        positions.push(new Position(row, column));
+      }
+    }
+
+    return positions;
+  }
+
   containsShip(ship: Ship): boolean {
     return ship.cells.every((cell) => this.contains(cell));
+  }
+
+  surroundingsOf(ship: Ship): Position[] {
+    const surroundings: Position[] = [];
+
+    for (const cell of ship.cells) {
+      for (const neighbor of this.neighborsOf(cell)) {
+        const isNewSurrounding =
+          !ship.occupies(neighbor) &&
+          !surroundings.some((known) => known.equals(neighbor));
+
+        if (isNewSurrounding) {
+          surroundings.push(neighbor);
+        }
+      }
+    }
+
+    return surroundings;
   }
 
   pulledInside(ship: Ship): Ship {
