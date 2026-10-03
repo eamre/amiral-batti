@@ -27,3 +27,15 @@ export function cellsOfShipAt(index: number, firstColumn: number): Position[] {
 export function allShipCells(firstColumn: number): Position[] {
   return SHIP_LENGTHS.flatMap((_, index) => cellsOfShipAt(index, firstColumn));
 }
+
+/** A repeatable random source that looks random (mulberry32). Same seed, same numbers. */
+export function seededRandom(seed: number): () => number {
+  let state = seed;
+
+  return () => {
+    state = (state + 0x6d2b79f5) | 0;
+    let mixed = Math.imul(state ^ (state >>> 15), 1 | state);
+    mixed = (mixed + Math.imul(mixed ^ (mixed >>> 7), 61 | mixed)) ^ mixed;
+    return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
+  };
+}
