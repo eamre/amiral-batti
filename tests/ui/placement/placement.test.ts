@@ -71,6 +71,10 @@ const fits = () => editorOf(ship(3, 0, 0), ship(2, 5, 5));
 const onTopOfEachOther = () => editorOf(ship(3, 0, 0), ship(2, 0, 2));
 
 describe("createPlacement: the board", () => {
+  it("keeps the board in a slot that gives way when the window is short", () => {
+    expect(placement(fits()).view.element.querySelector(".board-slot > .board--placing")).not.toBeNull();
+  });
+
   it("shows every ship of the fleet", () => {
     expect(placement(fits()).shipCount()).toBe(2);
   });

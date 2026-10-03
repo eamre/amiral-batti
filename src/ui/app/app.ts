@@ -8,7 +8,7 @@ import { ownWatersModel } from "../board/boardModel";
 import { createBattle } from "../battle/battle";
 import { renderBoard } from "../board/boardView";
 import { h } from "../dom/h";
-import { createLeaveButton } from "../room/leaveButton";
+import { createLeaveControl } from "../room/leaveControl";
 import { createLobby } from "../lobby/lobby";
 import { createPlacement } from "../placement/placement";
 import { fromPlacementDto, toPlacementDto } from "../placement/placementDto";
@@ -68,7 +68,7 @@ export function createApp(options: AppOptions): App {
   let latestComplaint = 0;
 
   const connection = h("span", { class: "connection", attrs: { "data-role": "connection" } });
-  const leave = createLeaveButton(() => commands.leave());
+  const leave = createLeaveControl(() => commands.leave());
   const notice = h("p", { class: "notice", attrs: { role: "status", "data-role": "notice" } });
   const slot = h("div", { class: "screen" });
   const element = h(
@@ -78,7 +78,7 @@ export function createApp(options: AppOptions): App {
       "header",
       { class: "header" },
       h("h1", { class: "title" }, `⚓ ${APP_TITLE}`),
-      h("div", { class: "header__side" }, connection, leave),
+      h("div", { class: "header__side" }, connection, leave.element),
     ),
     notice,
     slot,
@@ -90,7 +90,9 @@ export function createApp(options: AppOptions): App {
 
     const kind = screenKindOf(state.room);
     // There is a room to leave from the moment one is joined; the lobby has none.
-    leave.hidden = kind === "lobby";
+    leave.setVisible(kind !== "lobby");
+    // The page uses this to make a game fit the window while a form may scroll.
+    element.setAttribute("data-screen", kind);
     const view = current?.kind === kind ? current.view : switchTo(kind, state.room);
 
     view.update(state, receivedAt);
@@ -173,7 +175,7 @@ export function createApp(options: AppOptions): App {
 
   function waitingScreen(): ScreenView {
     const card = createRoomCard(options.copy);
-    const boardSlot = h("div");
+    const boardSlot = h("div", { class: "board-slot" });
 
     return screenView(h("div", { class: "screen" }, card.element, boardSlot), (next) => {
       const room = requireRoom(next.room);

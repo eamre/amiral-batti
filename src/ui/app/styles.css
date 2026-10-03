@@ -198,6 +198,32 @@ p {
   }
 }
 
+/* ---------- A question that waits for an answer ---------- */
+.dialog {
+  width: min(360px, calc(100vw - 32px));
+  padding: 20px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+.dialog[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 0.55);
+}
+
+.dialog__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
 .icon {
   width: 24px;
   height: 24px;
@@ -226,6 +252,12 @@ p {
 
 .button--primary {
   background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.button--danger {
+  border-color: var(--danger);
+  background: var(--danger);
   color: var(--accent-ink);
 }
 
@@ -296,6 +328,43 @@ p {
   display: flex;
   flex-direction: column;
   gap: var(--gap);
+}
+
+/* ---------- Fitting the window ---------- */
+/*
+ * The board is a square, and a window is often too short for a square as wide as the page.
+ * While a game is on, the page is exactly one window high and the board slot takes what the
+ * other cards leave: it is as big as its width allows (it is as high as it is wide) but gives
+ * way when it must, down to a minimum, below which the page scrolls after all.
+ * The lobby is a form, so it is left alone and may be longer than the window.
+ */
+#app:has(> [data-screen]:not([data-screen="lobby"])) {
+  height: 100dvh;
+}
+
+#app:has(> [data-screen]:not([data-screen="lobby"])) .screen {
+  min-height: 0;
+}
+
+#app:has(> [data-screen]:not([data-screen="lobby"])) > .screen,
+#app:has(> [data-screen]:not([data-screen="lobby"])) .screen > .screen {
+  flex: 1 1 0;
+}
+
+.board-slot {
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  min-height: 160px;
+}
+
+/* The biggest square that fits the slot, whichever of its width and height is smaller. */
+.board-slot > .board {
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
 }
 
 /* ---------- A checkbox with its words ---------- */

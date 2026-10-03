@@ -135,4 +135,7 @@ export const roomText = {
 export const appText = {
   opponentOffline: "Rakibin bağlantısı koptu. Dönmesi bekleniyor…",
   leave: "Odadan çık",
+  leaveQuestion: "Odadan çıkmak istediğine emin misin?",
+  leaveStay: "Vazgeç",
+  leaveConfirm: "Çık",
 };

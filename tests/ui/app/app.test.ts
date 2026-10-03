@@ -95,9 +95,9 @@ describe("createApp: the way out of a room", () => {
   };
 
   it("is not offered in the lobby, where there is no room to leave", () => {
-    const { find } = newApp();
+    const { role } = newApp();
 
-    expect(find("[data-role=leave]")?.hidden).toBe(true);
+    expect(role("leave")?.hidden).toBe(true);
   });
 
   it.each(Object.entries(screens))("is one icon in the header while %s", (_screen, room) => {
@@ -105,28 +105,72 @@ describe("createApp: the way out of a room", () => {
 
     show(state(room()));
 
-    const buttons = app.element.querySelectorAll<HTMLElement>("[data-role=leave]");
-    expect(buttons).toHaveLength(1);
-    expect(buttons[0]?.hidden).toBe(false);
-    expect(buttons[0]?.closest(".header")).not.toBeNull();
+    const controls = app.element.querySelectorAll<HTMLElement>("[data-role=leave]");
+    expect(controls).toHaveLength(1);
+    expect(controls[0]?.hidden).toBe(false);
+    expect(controls[0]?.closest(".header")).not.toBeNull();
   });
 
   it("goes away again when the player is back in the lobby", () => {
-    const { show, find } = newApp();
+    const { show, role } = newApp();
     show(state(roomView()));
 
     show(state(undefined));
 
-    expect(find("[data-role=leave]")?.hidden).toBe(true);
+    expect(role("leave")?.hidden).toBe(true);
   });
 
-  it.each(Object.entries(screens))("leaves the room when it is pressed while %s", (_screen, room) => {
+  it.each(Object.entries(screens))("asks before it leaves the room while %s", (_screen, room) => {
     const { show, role, commands } = newApp();
     show(state(room()));
 
-    role("leave")?.click();
+    role("leave-open")?.click();
+
+    expect(commands.leave).not.toHaveBeenCalled();
+    expect((role("leave-dialog") as HTMLDialogElement).open).toBe(true);
+  });
+
+  it.each(Object.entries(screens))("leaves the room once the player has said yes while %s", (_screen, room) => {
+    const { show, role, commands } = newApp();
+    show(state(room()));
+
+    role("leave-open")?.click();
+    role("leave-confirm")?.click();
 
     expect(commands.leave).toHaveBeenCalledTimes(1);
+  });
+
+  it("stays in the room when the player says no", () => {
+    const { show, role, commands } = newApp();
+    show(state(roomView()));
+
+    role("leave-open")?.click();
+    role("leave-stay")?.click();
+
+    expect(commands.leave).not.toHaveBeenCalled();
+  });
+});
+
+describe("createApp: fitting the screen", () => {
+  it("tells the page which screen it is showing, so a game can fit the window and a form can scroll", () => {
+    const { show, app } = newApp();
+    const kind = () => app.element.getAttribute("data-screen");
+
+    expect(kind()).toBe("lobby");
+    show(state(roomView({ game: placing() })));
+    expect(kind()).toBe("placement");
+    show(state(roomView({ game: placing({ youAreReady: true }) })));
+    expect(kind()).toBe("waiting");
+    show(state(roomView()));
+    expect(kind()).toBe("battle");
+  });
+
+  it("puts the board in a slot that gives way when the window is short, while waiting", () => {
+    const { show, find } = newApp();
+
+    show(state(roomView({ game: placing({ youAreReady: true }) })));
+
+    expect(find(".board-slot > .board")).not.toBeNull();
   });
 });
 
@@ -358,7 +402,8 @@ describe("createApp: the battle", () => {
     show(state(roomView({ game: gameView({ phase: "finished", winner: "first", yourTurn: false, secondsLeft: undefined }) })));
 
     role("rematch")?.click();
-    role("leave")?.click();
+    role("leave-open")?.click();
+    role("leave-confirm")?.click();
 
     expect(commands.rematch).toHaveBeenCalledTimes(1);
     expect(commands.leave).toHaveBeenCalledTimes(1);

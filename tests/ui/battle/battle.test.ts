@@ -36,6 +36,18 @@ const finished = (changes: Partial<RoomViewDto> = {}, winner: "first" | "second"
     ...changes,
   });
 
+describe("createBattle: the board", () => {
+  it("sits in a slot that gives way when the window is short, whichever board it is", () => {
+    const { view, delayIsOver, update } = battle();
+    const inSlot = () => view.element.querySelector(".board-slot > .board") !== null;
+
+    expect(inSlot()).toBe(true);
+    update(opponentsTurn());
+    delayIsOver();
+    expect(inSlot()).toBe(true);
+  });
+});
+
 describe("createBattle: whose turn it is", () => {
   it("says it is the viewer's turn", () => {
     expect(battle().find("status")?.textContent).toBe("Sıra sende — ateş et!");

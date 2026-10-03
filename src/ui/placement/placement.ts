@@ -103,7 +103,7 @@ export function createPlacement(options: PlacementOptions): PlacementView {
     element: h(
       "div",
       { class: "screen" },
-      board.element,
+      h("div", { class: "board-slot" }, board.element),
       hint,
       h("div", { class: "row" }, shuffleButton, readyButton),
     ),

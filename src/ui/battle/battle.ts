@@ -44,7 +44,7 @@ export function createBattle(options: BattleOptions): BattleView {
   const timer = h("span", { class: "timer", attrs: { "data-role": "timer" } });
   const messageLine = h("p", { class: "hint", attrs: { "data-role": "message" } });
   const scoreSlot = h("div");
-  const boardSlot = h("div");
+  const boardSlot = h("div", { class: "board-slot" });
   const fleetSlot = h("div");
   const rematchSlot = h("div");
 
