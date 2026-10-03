@@ -6,7 +6,9 @@ export type GameRuleErrorCode =
   | "not-your-turn"
   | "shot-not-allowed"
   | "room-full"
-  | "unknown-player";
+  | "unknown-player"
+  | "no-such-room"
+  | "not-in-room";
 
 /**
  * A player asked for something the rules do not allow.

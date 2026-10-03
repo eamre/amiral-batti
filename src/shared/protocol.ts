@@ -83,7 +83,7 @@ export interface ShotDto {
 
 // ---- Server → browser ----
 
-export type ErrorCode = GameRuleErrorCode | "no-such-room" | "not-in-room" | "bad-message";
+export type ErrorCode = GameRuleErrorCode | "bad-message";
 
 export type ServerMessage =
   /** You sit at a table now. Keep the token: it is how you come back after a disconnect. */
