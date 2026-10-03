@@ -36,6 +36,12 @@ describe("ownWatersModel", () => {
     expect(board.ships.every((ship) => !ship.sunk)).toBe(true);
   });
 
+  it("keeps the way each ship faces", () => {
+    const board = ownWatersModel(gameView());
+
+    expect(board.ships.map((ship) => ship.quarterTurns)).toEqual([0, 3]);
+  });
+
   it("marks a shot at a ship as a hit and a shot at water as a miss", () => {
     const board = ownWatersModel(
       gameView({ shotsAtYou: [{ row: 0, column: 1 }, { row: 3, column: 3 }] }),
@@ -110,7 +116,7 @@ describe("enemyWatersModel", () => {
       true,
     );
 
-    expect(board.ships).toEqual([{ cells: sunk, sunk: true }]);
+    expect(board.ships).toEqual([{ cells: sunk, quarterTurns: 0, sunk: true }]);
     expect(cellAt(board, 8, 5).sunk).toBe(true);
     expect(cellAt(board, 8, 6).sunk).toBe(true);
     expect(cellAt(board, 8, 7).sunk).toBe(false);

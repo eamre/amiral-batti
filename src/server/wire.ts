@@ -61,7 +61,10 @@ function toGameViewDto(view: GameView): GameViewDto {
     yourTurn: view.yourTurn,
     secondsLeft: view.secondsLeft,
     winner: view.winner,
-    yourShips: view.yourShips.map((cells) => cells.map(toCellDto)),
+    yourShips: view.yourShips.map((ship) => ({
+      cells: ship.cells.map(toCellDto),
+      quarterTurns: ship.quarterTurns,
+    })),
     shotsAtYou: view.shotsAtYou.map(toCellDto),
     yourShots: view.yourShots.map((shot) => ({ cell: toCellDto(shot.position), hit: shot.hit })),
     sunkEnemyShips: view.sunkEnemyShips.map((cells) => cells.map(toCellDto)),

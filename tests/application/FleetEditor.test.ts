@@ -158,6 +158,8 @@ describe("FleetEditor", () => {
   });
 
   describe("rotate", () => {
+    const turnsOf = (editor: FleetEditor, index = 0): number | undefined => editor.ships[index]?.ship.quarterTurns;
+
     it("turns a horizontal ship upright and keeps its top-left corner", () => {
       const editor = FleetEditor.of(SETTINGS, [boat(2, 3)]);
 
@@ -166,12 +168,25 @@ describe("FleetEditor", () => {
       expect(cellsOf(rotated, 0)).toEqual([new Position(2, 3), new Position(3, 3)]);
     });
 
-    it("turns it back with the next tap", () => {
+    it("turns one quarter with every tap, so four taps bring it back to where it started", () => {
+      let editor = FleetEditor.of(SETTINGS, [boat(2, 3)]);
+      const turns: (number | undefined)[] = [turnsOf(editor)];
+
+      for (let tap = 0; tap < 4; tap++) {
+        editor = editor.rotate(0);
+        turns.push(turnsOf(editor));
+      }
+
+      expect(turns).toEqual([0, 1, 2, 3, 0]);
+    });
+
+    it("turns a straight ship half way with the second tap: same cells, bow the other way", () => {
       const editor = FleetEditor.of(SETTINGS, [boat(2, 3)]);
 
-      const rotated = editor.rotate(0).rotate(0);
+      const halfWay = editor.rotate(0).rotate(0);
 
-      expect(cellsOf(rotated, 0)).toEqual([new Position(2, 3), new Position(2, 4)]);
+      expect(cellsOf(halfWay, 0)).toEqual([new Position(2, 3), new Position(2, 4)]);
+      expect(turnsOf(halfWay)).toBe(2);
     });
 
     it("pulls a ship back inside when turning would push it out of the board", () => {
@@ -180,6 +195,7 @@ describe("FleetEditor", () => {
       const rotated = editor.rotate(0);
 
       expect(cellsOf(rotated, 0)).toEqual([new Position(8, 4), new Position(9, 4)]);
+      expect(turnsOf(rotated)).toBe(1);
     });
 
     it("does not change the original editor", () => {
@@ -188,9 +204,19 @@ describe("FleetEditor", () => {
       editor.rotate(0);
 
       expect(cellsOf(editor, 0)).toEqual([new Position(2, 3), new Position(2, 4)]);
+      expect(turnsOf(editor)).toBe(0);
     });
 
-    it("leaves a ship that looks the same from every side alone", () => {
+    it("turns only the ship that was tapped", () => {
+      const editor = FleetEditor.of(SETTINGS, [boat(0, 0), boat(5, 5)]);
+
+      const rotated = editor.rotate(1);
+
+      expect(turnsOf(rotated, 0)).toBe(0);
+      expect(turnsOf(rotated, 1)).toBe(1);
+    });
+
+    it("turns a ship that looks the same from every side as well, so the bow can turn", () => {
       const dinghy: EditorShip = {
         kind: "dinghy",
         ship: new Ship(ShipShape.straight(1), new Position(4, 4)),
@@ -198,6 +224,7 @@ describe("FleetEditor", () => {
       const editor = FleetEditor.of(SETTINGS, [dinghy]);
 
       expect(cellsOf(editor.rotate(0), 0)).toEqual([new Position(4, 4)]);
+      expect(turnsOf(editor.rotate(0))).toBe(1);
     });
 
     it("gives all four ways of a T-shaped ship in turn", () => {
@@ -222,7 +249,7 @@ describe("FleetEditor", () => {
       ]);
     });
 
-    it("skips a way of standing that would collide, when another way is free", () => {
+    it("does not dodge other ships: the next quarter turn is the one that comes, even when it collides", () => {
       const tanker: EditorShip = {
         kind: "tanker",
         ship: new Ship(ShipShape.tShaped(), new Position(3, 3)),
@@ -235,11 +262,10 @@ describe("FleetEditor", () => {
 
       const rotated = editor.rotate(0);
 
-      expect(rotated.statusOf(0)).toBe("valid");
-      expect(cellsOf(rotated, 0)).not.toEqual(cellsOf(editor, 0));
+      expect(turnsOf(rotated)).toBe(1);
     });
 
-    it("turns anyway when every other way collides; the status tells", () => {
+    it("turns even when the new standing collides; the status tells", () => {
       const blocker = boat(1, 0);
       const editor = FleetEditor.of(SETTINGS, [boat(0, 0), blocker]);
 

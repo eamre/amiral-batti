@@ -10,7 +10,7 @@ export interface BoardOptions {
   readonly onFire: (cell: CellDto) => void;
 }
 
-const MARK_INSET = 0.28;
+const MARK_INSET = 0.34;
 const MISS_RADIUS = 0.12;
 const RULED_OUT_RADIUS = 0.07;
 
@@ -28,7 +28,7 @@ export function renderBoard(model: BoardModel, options: BoardOptions): SVGSVGEle
       attrs: { viewBox: `0 0 ${model.size} ${model.size}`, role: "group", "aria-label": options.label },
     },
     ...seaAndGrid(model.size),
-    ...model.ships.map((ship) => shipGraphic(ship.cells, ship.sunk ? "sunk" : "afloat")),
+    ...model.ships.map((ship) => shipGraphic(ship.cells, ship.sunk ? "sunk" : "afloat", ship.quarterTurns)),
     ...model.cells.filter((cell) => cell.mark !== "none").map(markOf),
     ...model.cells.filter((cell) => cell.canFire).map((cell) => target(cell, options.onFire)),
   );

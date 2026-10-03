@@ -4,6 +4,12 @@ import type { Position } from "../domain/Position";
 import type { Game, GamePhase } from "./Game";
 import type { GameSettings } from "./GameSettings";
 
+/** One of the viewer's own ships: the cells it covers and how far it was turned (it shows which way the bow points). */
+export interface OwnShipView {
+  readonly cells: readonly Position[];
+  readonly quarterTurns: number;
+}
+
 export interface ShotView {
   readonly position: Position;
   readonly hit: boolean;
@@ -24,7 +30,7 @@ export interface GameView {
   readonly yourTurn: boolean;
   readonly secondsLeft?: number;
   readonly winner?: Player;
-  readonly yourShips: readonly (readonly Position[])[];
+  readonly yourShips: readonly OwnShipView[];
   readonly shotsAtYou: readonly Position[];
   readonly yourShots: readonly ShotView[];
   readonly sunkEnemyShips: readonly (readonly Position[])[];
@@ -49,7 +55,7 @@ export function viewFor(game: Game, you: Player, now: number): GameView {
     yourTurn: game.turn === you,
     secondsLeft: game.timeLeft(now),
     winner: game.winner,
-    yourShips: yourFleet?.ships.map((ship) => ship.cells) ?? [],
+    yourShips: yourFleet?.ships.map((ship) => ({ cells: ship.cells, quarterTurns: ship.quarterTurns })) ?? [],
     shotsAtYou: yourFleet?.shotsReceived ?? [],
     yourShots: shotsAt(enemyFleet),
     sunkEnemyShips: enemyFleet?.sunkShips.map((ship) => ship.cells) ?? [],

@@ -28,7 +28,7 @@ export function createPlacementBoard(size: number, label: string): PlacementBoar
   return {
     element,
     show(model) {
-      ships.replaceChildren(...model.ships.map((ship) => shipGraphic(ship.cells, ship.look)));
+      ships.replaceChildren(...model.ships.map((ship) => shipGraphic(ship.cells, ship.look, ship.quarterTurns)));
     },
   };
 }

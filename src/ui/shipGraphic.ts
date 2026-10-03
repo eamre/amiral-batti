@@ -15,8 +15,8 @@ export type ShipLook = "afloat" | "sunk" | "misplaced" | "lifted";
  * stroke), then the body on top. Cells of a bent ship then merge into one shape, with no
  * line left between them.
  */
-export function shipGraphic(cells: readonly CellDto[], look: ShipLook): SVGGElement {
-  const { hull, cabins } = shipArt(cells);
+export function shipGraphic(cells: readonly CellDto[], look: ShipLook, quarterTurns = 0): SVGGElement {
+  const { hull, cabins } = shipArt(cells, quarterTurns);
 
   return svg(
     "g",

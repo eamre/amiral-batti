@@ -17,6 +17,8 @@ export interface CellModel {
 
 export interface ShipModel {
   readonly cells: readonly CellDto[];
+  /** How far the ship was turned; it decides which way the bow points. */
+  readonly quarterTurns: number;
   readonly sunk: boolean;
 }
 
@@ -31,11 +33,12 @@ export interface BoardModel {
 /** The viewer's own fleet, with the shots the opponent has fired at it. */
 export function ownWatersModel(game: GameViewDto): BoardModel {
   const hitCells = keysOf(game.shotsAtYou, game);
-  const ships = game.yourShips.map((cells) => ({
+  const ships = game.yourShips.map(({ cells, quarterTurns }) => ({
     cells,
+    quarterTurns,
     sunk: cells.every((cell) => hitCells.has(keyOf(cell, game))),
   }));
-  const shipCells = keysOf(game.yourShips.flat(), game);
+  const shipCells = keysOf(ships.flatMap((ship) => ship.cells), game);
   const sunkCells = keysOf(ships.filter((ship) => ship.sunk).flatMap((ship) => ship.cells), game);
   const ruledOut = keysOf(game.knownEmptyOwnCells, game);
 
@@ -58,7 +61,8 @@ export function enemyWatersModel(game: GameViewDto, canFire: boolean): BoardMode
 
   return {
     size: game.settings.boardSize,
-    ships: game.sunkEnemyShips.map((cells) => ({ cells, sunk: true })),
+    // The server does not tell how an enemy ship was turned, so its bow takes the default direction.
+    ships: game.sunkEnemyShips.map((cells) => ({ cells, quarterTurns: 0, sunk: true })),
     cells: allCells(game, (key) => {
       const shotHit = shots.get(key);
       const mark: CellMark =

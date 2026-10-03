@@ -97,29 +97,15 @@ export class FleetEditor {
   }
 
   /**
-   * Turns a ship a quarter turn clockwise, keeping its top-left corner (pulled in if needed).
-   * It goes to the next way of standing that looks different, preferring one that is legal.
+   * Turns a ship one quarter turn clockwise, keeping its top-left corner (pulled in if needed).
+   * Every tap is the next quarter turn, so four taps bring the ship back. The editor does not
+   * dodge other ships: if the new standing collides, the ship shows as misplaced and the
+   * player turns it again or moves it.
    */
   rotate(index: number): FleetEditor {
     const { ship } = this.itemAt(index);
-    const current = describe(ship);
-    const candidates: Ship[] = [];
-    let turned = ship;
 
-    for (let turns = 1; turns < 4; turns++) {
-      turned = this.board.pulledInside(turned.rotated());
-
-      const isNew = describe(turned) !== current && !candidates.some((c) => describe(c) === describe(turned));
-
-      if (isNew) {
-        candidates.push(turned);
-      }
-    }
-
-    const legal = candidates.find((candidate) => this.isLegalAt(index, candidate));
-    const next = legal ?? candidates[0];
-
-    return next === undefined ? this : this.replace(index, next);
+    return this.replace(index, this.board.pulledInside(ship.rotated()));
   }
 
   toPlacements(): ShipPlacement[] {
@@ -138,12 +124,6 @@ export class FleetEditor {
     return new PlacementValidator(this.board, this.settings.allowTouching);
   }
 
-  private isLegalAt(index: number, ship: Ship): boolean {
-    const others = this.ships.filter((_, other) => other !== index).map((item) => item.ship);
-
-    return this.validator.check(ship, others) === "valid";
-  }
-
   private itemAt(index: number): EditorShip {
     const item = this.ships[index];
 
@@ -159,14 +139,6 @@ export class FleetEditor {
       this.ships.map((item, position) => (position === index ? { kind: item.kind, ship } : item)),
     );
   }
-}
-
-/** Two ways of standing look the same exactly when they cover the same cells. */
-function describe(ship: Ship): string {
-  return ship.cells
-    .map((cell) => `${cell.row},${cell.column}`)
-    .sort()
-    .join(" ");
 }
 
 function shipAt(ships: readonly Ship[], index: number): Ship {

@@ -4,6 +4,7 @@ import type { ShipLook } from "./shipGraphic";
 
 export interface PlacedShipModel {
   readonly cells: readonly CellDto[];
+  readonly quarterTurns: number;
   readonly look: ShipLook;
 }
 
@@ -24,6 +25,7 @@ export function placementModel(session: PlacementSession): PlacementModel {
     size: fleet.settings.boardSize,
     ships: fleet.ships.map(({ ship }, index) => ({
       cells: ship.cells.map((cell) => ({ row: cell.row, column: cell.column })),
+      quarterTurns: ship.quarterTurns,
       look: lookOf(fleet.statusOf(index) === "valid", index === session.draggingIndex),
     })),
   };

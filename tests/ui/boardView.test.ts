@@ -30,6 +30,16 @@ describe("renderBoard", () => {
     expect(board.querySelectorAll(".ship")).toHaveLength(2);
   });
 
+  it("draws the bow of an own ship on the side it was turned to", () => {
+    const board = renderBoard(ownWatersModel(gameView()), { label: "Filon", onFire: noop });
+    const [facingRight, facingUp] = [...board.querySelectorAll(".ship__body polygon")].map((hull) =>
+      hull.getAttribute("points"),
+    );
+
+    expect(facingRight).toContain("2.94,0.5");
+    expect(facingUp).toContain("5.5,5.06");
+  });
+
   it("draws a sunk ship as sunk", () => {
     const sunk = [{ row: 1, column: 1 }, { row: 1, column: 2 }];
     const { board } = enemyBoard({ sunkEnemyShips: [sunk] });
@@ -49,6 +59,16 @@ describe("renderBoard: marks", () => {
     const { board } = enemyBoard({ yourShots: shots });
 
     expect(board.querySelectorAll(".mark--hit")).toHaveLength(1);
+  });
+
+  it("keeps the cross small: its arms cover less than 40% of the width of the cell", () => {
+    const { board } = enemyBoard({ yourShots: shots });
+    const ends = [...board.querySelectorAll(".mark--hit line")].flatMap((line) =>
+      ["x1", "x2"].map((name) => Number(line.getAttribute(name)) - 1),
+    );
+
+    expect(Math.max(...ends) - Math.min(...ends)).toBeLessThan(0.4);
+    expect(Math.min(...ends)).toBeGreaterThanOrEqual(0.3);
   });
 
   it("dots the cells that were missed", () => {

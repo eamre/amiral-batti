@@ -82,7 +82,8 @@ describe("toRoomViewDto", () => {
 
     const dto = toRoomViewDto(room.viewFor(AHMET.token, NOW));
 
-    expect(dto.game.yourShips[0]?.[0]).toStrictEqual({ row: 0, column: 0 });
+    expect(dto.game.yourShips[0]?.cells[0]).toStrictEqual({ row: 0, column: 0 });
+    expect(dto.game.yourShips[0]?.quarterTurns).toBe(0);
     expect(dto.game.yourShots[0]).toStrictEqual({ cell: { row: 0, column: 5 }, hit: true });
   });
 

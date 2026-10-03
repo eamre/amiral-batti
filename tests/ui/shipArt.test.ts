@@ -49,6 +49,50 @@ describe("shipArt: a straight ship", () => {
     expect(tip.y).toBeCloseTo(2.94);
   });
 
+  it("points its bow to the left when it was turned half way", () => {
+    const [hull] = shipArt(horizontal(2, 1, 3), 2).hull;
+    const tip = hull!.reduce((best, point) => (point.x < best.x ? point : best));
+
+    expect(tip.x).toBeCloseTo(1.06);
+    expect(tip.y).toBeCloseTo(2.5);
+  });
+
+  it("points its bow up when it stands and was turned three quarters", () => {
+    const [hull] = shipArt(vertical(0, 4, 3), 3).hull;
+    const tip = hull!.reduce((best, point) => (point.y < best.y ? point : best));
+
+    expect(tip.x).toBeCloseTo(4.5);
+    expect(tip.y).toBeCloseTo(0.06);
+  });
+
+  it("ignores a turn count that does not fit the way the ship lies: the cells win", () => {
+    const [hull] = shipArt(horizontal(2, 1, 3), 1).hull;
+    const tip = hull!.reduce((best, point) => (point.x > best.x ? point : best));
+
+    expect(tip.x).toBeCloseTo(3.94);
+  });
+
+  it("keeps the cabin of a two-cell ship toward the stern, on whichever side the stern is", () => {
+    const [toTheRight] = shipArt(horizontal(0, 0, 2), 0).cabins;
+    const [toTheLeft] = shipArt(horizontal(0, 0, 2), 2).cabins;
+
+    expect(toTheRight!.x + toTheRight!.width / 2).toBeCloseTo(0.7);
+    expect(toTheLeft!.x + toTheLeft!.width / 2).toBeCloseTo(1.3);
+  });
+
+  it.each([
+    [0, "x", 5.94],
+    [1, "y", 5.94],
+    [2, "x", 5.06],
+    [3, "y", 5.06],
+  ] as const)("points the bow of a one-cell ship turned %i quarters to its own side", (turns, axis, tipAt) => {
+    const [hull] = shipArt([{ row: 5, column: 5 }], turns).hull;
+    const values = hull!.map((point) => point[axis]);
+    const farthest = turns < 2 ? Math.max(...values) : Math.min(...values);
+
+    expect(farthest).toBeCloseTo(tipAt);
+  });
+
   it("is a single boat-shaped hull even when it is one cell", () => {
     expect(shipArt([{ row: 5, column: 5 }]).hull).toHaveLength(1);
   });
@@ -84,6 +128,10 @@ describe("shipArt: a ship of any other shape", () => {
 
   it("has no cabins", () => {
     expect(shipArt(tShaped).cabins).toHaveLength(0);
+  });
+
+  it("looks the same whatever the turn count: the cells already show the way it stands", () => {
+    expect(shipArt(tShaped, 2)).toEqual(shipArt(tShaped, 0));
   });
 
   // The T: the stem is cells 0, 1 and 2 (top to bottom), cell 3 is the arm to the right of cell 1.

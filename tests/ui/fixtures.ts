@@ -12,8 +12,8 @@ export function gameView(changes: Partial<GameViewDto> = {}): GameViewDto {
     yourTurn: true,
     secondsLeft: 20,
     yourShips: [
-      [{ row: 0, column: 0 }, { row: 0, column: 1 }, { row: 0, column: 2 }],
-      [{ row: 5, column: 5 }, { row: 6, column: 5 }],
+      { cells: [{ row: 0, column: 0 }, { row: 0, column: 1 }, { row: 0, column: 2 }], quarterTurns: 0 },
+      { cells: [{ row: 5, column: 5 }, { row: 6, column: 5 }], quarterTurns: 3 },
     ],
     shotsAtYou: [],
     yourShots: [],

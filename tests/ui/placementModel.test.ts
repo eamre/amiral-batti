@@ -34,6 +34,12 @@ describe("placementModel", () => {
     ]);
   });
 
+  it("carries the way each ship faces", () => {
+    const turned = new Ship(ShipShape.straight(2), new Position(4, 4), 2);
+
+    expect(placementModel(sessionOf(turned)).ships[0]!.quarterTurns).toBe(2);
+  });
+
   it("shows ships that stand where they should as afloat", () => {
     expect(looks(sessionOf(ship(3, 0, 0), ship(2, 5, 5)))).toEqual(["afloat", "afloat"]);
   });

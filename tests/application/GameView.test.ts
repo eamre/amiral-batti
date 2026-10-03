@@ -65,7 +65,18 @@ describe("viewFor", () => {
     it("shows the viewer's own ships cell by cell", () => {
       const view = viewFor(gameInBattle(), "first", NOW);
 
-      expect(view.yourShips[4]).toEqual(cellsOfShipAt(4, 0));
+      expect(view.yourShips[4]?.cells).toEqual(cellsOfShipAt(4, 0));
+    });
+
+    it("tells how far each of the viewer's ships was turned, so the bow can point the right way", () => {
+      const placements = placementsFrom(0).map((placement, index) =>
+        index === 4 ? { ...placement, quarterTurns: 2 } : placement,
+      );
+      const game = Game.create().markReady("first", placements, NOW);
+
+      const view = viewFor(game, "first", NOW);
+
+      expect(view.yourShips.map((ship) => ship.quarterTurns)).toEqual([0, 0, 0, 0, 2]);
     });
 
     it("says whose turn it is and how many seconds are left", () => {

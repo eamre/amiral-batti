@@ -46,6 +46,11 @@ export interface ShotViewDto {
   readonly hit: boolean;
 }
 
+export interface OwnShipDto {
+  readonly cells: readonly CellDto[];
+  readonly quarterTurns: number;
+}
+
 export interface GameViewDto {
   readonly you: Player;
   readonly phase: GamePhase;
@@ -56,7 +61,7 @@ export interface GameViewDto {
   readonly yourTurn: boolean;
   readonly secondsLeft?: number;
   readonly winner?: Player;
-  readonly yourShips: readonly (readonly CellDto[])[];
+  readonly yourShips: readonly OwnShipDto[];
   readonly shotsAtYou: readonly CellDto[];
   readonly yourShots: readonly ShotViewDto[];
   readonly sunkEnemyShips: readonly (readonly CellDto[])[];

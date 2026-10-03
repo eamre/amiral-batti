@@ -53,12 +53,47 @@ function placement(initial: FleetEditor) {
   };
 }
 
+/** The side a hull points to: the one with a single vertex on the outermost line. */
+function bowSide(points: string): "right" | "down" | "left" | "up" {
+  const vertices = points.split(" ").map((point) => point.split(",").map(Number) as [number, number]);
+  const xs = vertices.map(([x]) => x);
+  const ys = vertices.map(([, y]) => y);
+  const alone = (values: number[], edge: number) => values.filter((value) => value === edge).length === 1;
+  const isFlat = Math.max(...xs) - Math.min(...xs) > Math.max(...ys) - Math.min(...ys);
+
+  if (isFlat) {
+    return alone(xs, Math.max(...xs)) ? "right" : "left";
+  }
+  return alone(ys, Math.max(...ys)) ? "down" : "up";
+}
+
 const fits = () => editorOf(ship(3, 0, 0), ship(2, 5, 5));
 const onTopOfEachOther = () => editorOf(ship(3, 0, 0), ship(2, 0, 2));
 
 describe("createPlacement: the board", () => {
   it("shows every ship of the fleet", () => {
     expect(placement(fits()).shipCount()).toBe(2);
+  });
+
+  it("draws every ship with its bow on the side it was turned to", () => {
+    const facingLeft = new Ship(ShipShape.straight(3), new Position(0, 0), 2);
+    const { board } = placement(editorOf(facingLeft));
+
+    expect(board.querySelector(".ship__body polygon")?.getAttribute("points")).toContain("0.06,0.5");
+  });
+
+  it("turns the bow with every tap: right, down, left, up and right again", () => {
+    const { pointer, board } = placement(editorOf(ship(3, 3, 3)));
+    const bows: string[] = [];
+
+    for (let tap = 0; tap < 5; tap++) {
+      bows.push(bowSide(board.querySelector(".ship__body polygon")!.getAttribute("points")!));
+      // The top-left corner stays where it is, so this point is always on the ship.
+      pointer("pointerdown", 35, 35);
+      pointer("pointerup", 35, 35);
+    }
+
+    expect(bows).toEqual(["right", "down", "left", "up", "right"]);
   });
 
   it("turns a ship that is tapped", () => {

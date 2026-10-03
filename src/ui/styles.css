@@ -324,7 +324,7 @@ p {
 
 .mark--hit line {
   stroke: var(--hit);
-  stroke-width: 0.12;
+  stroke-width: 0.08;
   stroke-linecap: round;
 }
 

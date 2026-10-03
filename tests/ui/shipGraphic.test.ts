@@ -16,6 +16,15 @@ describe("shipGraphic", () => {
     expect(graphic.querySelectorAll(".ship__body polygon")).toHaveLength(1);
   });
 
+  it("points its bow the way the ship was turned", () => {
+    const points = (turns: number) =>
+      shipGraphic(flat, "afloat", turns).querySelector(".ship__body polygon")?.getAttribute("points");
+
+    expect(points(2)).not.toBe(points(0));
+    expect(points(0)).toContain("2.94,0.5");
+    expect(points(2)).toContain("0.06,0.5");
+  });
+
   it("draws the cabins", () => {
     expect(shipGraphic(flat, "afloat").querySelectorAll(".ship__cabin")).toHaveLength(1);
   });
