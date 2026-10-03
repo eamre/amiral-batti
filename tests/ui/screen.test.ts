@@ -4,35 +4,27 @@ import { gameView, roomView } from "./fixtures";
 
 describe("shownBoard", () => {
   it("shows the viewer's own waters while ships are placed", () => {
-    expect(shownBoard(gameView({ phase: "placing" }), false)).toBe("own");
+    expect(shownBoard(gameView({ phase: "placing" }))).toBe("own");
   });
 
   it("shows the enemy waters when it is the viewer's turn", () => {
-    expect(shownBoard(gameView({ yourTurn: true }), false)).toBe("enemy");
+    expect(shownBoard(gameView({ yourTurn: true }))).toBe("enemy");
   });
 
   it("shows the own waters while the opponent is firing", () => {
-    expect(shownBoard(gameView({ yourTurn: false }), false)).toBe("own");
+    expect(shownBoard(gameView({ yourTurn: false }))).toBe("own");
   });
 
   it("shows the enemy waters to the winner", () => {
-    expect(shownBoard(gameView({ phase: "finished", winner: "first", yourTurn: false }), false)).toBe(
+    expect(shownBoard(gameView({ phase: "finished", winner: "first", yourTurn: false }))).toBe(
       "enemy",
     );
   });
 
   it("shows the own waters to the loser", () => {
-    expect(shownBoard(gameView({ phase: "finished", winner: "second", yourTurn: false }), false)).toBe(
+    expect(shownBoard(gameView({ phase: "finished", winner: "second", yourTurn: false }))).toBe(
       "own",
     );
-  });
-
-  it.each([
-    [gameView({ phase: "placing" }), "enemy"],
-    [gameView({ yourTurn: true }), "own"],
-    [gameView({ yourTurn: false }), "enemy"],
-  ] as const)("shows the other board when the viewer peeks", (game, expected) => {
-    expect(shownBoard(game, true)).toBe(expected);
   });
 });
 

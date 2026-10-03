@@ -14,15 +14,16 @@ export type StatusCode =
 
 /**
  * There is one board on the screen. It shows the enemy waters while the viewer has something
- * to do there, and his own fleet otherwise. `peek` flips it for a moment.
+ * to do there, and his own fleet otherwise.
  */
-export function shownBoard(game: GameViewDto, peek: boolean): BoardSide {
-  const wanted = wantedBoard(game);
-
-  if (!peek) {
-    return wanted;
+export function shownBoard(game: GameViewDto): BoardSide {
+  if (game.phase === "placing") {
+    return "own";
   }
-  return wanted === "enemy" ? "own" : "enemy";
+  if (game.phase === "finished") {
+    return game.winner === game.you ? "enemy" : "own";
+  }
+  return game.yourTurn ? "enemy" : "own";
 }
 
 export function statusOf(room: RoomViewDto): StatusCode {
@@ -46,14 +47,4 @@ export function statusOf(room: RoomViewDto): StatusCode {
 
 export function canFireNow(game: GameViewDto, isOnline: boolean): boolean {
   return isOnline && game.phase === "battle" && game.yourTurn;
-}
-
-function wantedBoard(game: GameViewDto): BoardSide {
-  if (game.phase === "placing") {
-    return "own";
-  }
-  if (game.phase === "finished") {
-    return game.winner === game.you ? "enemy" : "own";
-  }
-  return game.yourTurn ? "enemy" : "own";
 }
