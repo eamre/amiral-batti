@@ -22,8 +22,6 @@ export interface PlacementOptions {
 export interface PlacementView {
   readonly element: HTMLElement;
   setOnline(online: boolean): void;
-  /** Once the player is ready the fleet is locked. */
-  setReady(ready: boolean): void;
 }
 
 /** The screen where the player arranges his fleet: the board, a hint, and the shuffle and ready buttons. */
@@ -32,7 +30,6 @@ export function createPlacement(options: PlacementOptions): PlacementView {
   const size = settings.boardSize;
   let session = PlacementSession.start(options.initial);
   let online = true;
-  let isReady = false;
 
   const board = createPlacementBoard(size, placementText.board);
   const hint = h("p", { class: "hint hint--center", attrs: { "data-role": "hint" } });
@@ -60,8 +57,7 @@ export function createPlacement(options: PlacementOptions): PlacementView {
   function render(): void {
     board.show(placementModel(session));
     hint.textContent = session.editor.isLegal ? placementText.hint : placementText.fix;
-    readyButton.disabled = isReady || !online || !session.editor.isLegal;
-    shuffleButton.disabled = isReady;
+    readyButton.disabled = !online || !session.editor.isLegal;
   }
 
   function boardPoint(event: PointerEvent) {
@@ -84,9 +80,6 @@ export function createPlacement(options: PlacementOptions): PlacementView {
   }
 
   board.element.addEventListener("pointerdown", (event) => {
-    if (isReady) {
-      return;
-    }
     event.preventDefault();
     // Keeps the events coming to the board even when the finger slides off it.
     board.element.setPointerCapture(event.pointerId);
@@ -116,10 +109,6 @@ export function createPlacement(options: PlacementOptions): PlacementView {
     ),
     setOnline(isOnline) {
       online = isOnline;
-      render();
-    },
-    setReady(ready) {
-      isReady = ready;
       render();
     },
   };

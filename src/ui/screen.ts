@@ -26,6 +26,19 @@ export function shownBoard(game: GameViewDto): BoardSide {
   return game.yourTurn ? "enemy" : "own";
 }
 
+/** Which screen the player is on. The app builds a screen when it changes and keeps it while it stays. */
+export type ScreenKind = "lobby" | "placement" | "waiting" | "battle";
+
+export function screenKindOf(room: RoomViewDto | undefined): ScreenKind {
+  if (room === undefined) {
+    return "lobby";
+  }
+  if (room.game.phase === "placing") {
+    return room.game.youAreReady ? "waiting" : "placement";
+  }
+  return "battle";
+}
+
 export function statusOf(room: RoomViewDto): StatusCode {
   const { game } = room;
 

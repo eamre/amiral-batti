@@ -462,3 +462,40 @@ p {
 .status .hint {
   min-height: 1.4em;
 }
+
+/* ---------- App ---------- */
+/* A message that floats at the bottom, so that showing it never moves anything. */
+.notice {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 10;
+  max-width: calc(100vw - 32px);
+  padding: 10px 16px;
+  transform: translateX(-50%);
+  background: var(--card);
+  border-radius: var(--radius-small);
+  box-shadow: var(--shadow);
+  color: var(--danger);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.notice:empty {
+  display: none;
+}
+
+.code {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+}
+
+.code__text {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  font-variant-numeric: tabular-nums;
+}

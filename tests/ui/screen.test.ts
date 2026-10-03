@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canFireNow, shownBoard, statusOf } from "../../src/ui/screen";
+import { canFireNow, screenKindOf, shownBoard, statusOf } from "../../src/ui/screen";
 import { gameView, roomView } from "./fixtures";
 
 describe("shownBoard", () => {
@@ -94,5 +94,23 @@ describe("canFireNow", () => {
   it("is false when the game is not in battle", () => {
     expect(canFireNow(gameView({ phase: "placing" }), true)).toBe(false);
     expect(canFireNow(gameView({ phase: "finished" }), true)).toBe(false);
+  });
+});
+
+describe("screenKindOf", () => {
+  it("is the lobby while the player is in no room", () => {
+    expect(screenKindOf(undefined)).toBe("lobby");
+  });
+
+  it("is the placement of ships while he has not said he is ready", () => {
+    expect(screenKindOf(roomView({ game: gameView({ phase: "placing", youAreReady: false }) }))).toBe("placement");
+  });
+
+  it("is the wait for the opponent's fleet once he has said he is ready", () => {
+    expect(screenKindOf(roomView({ game: gameView({ phase: "placing", youAreReady: true }) }))).toBe("waiting");
+  });
+
+  it.each(["battle", "finished"] as const)("is the battle screen in the %s phase", (phase) => {
+    expect(screenKindOf(roomView({ game: gameView({ phase }) }))).toBe("battle");
   });
 });

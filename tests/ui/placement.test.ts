@@ -186,17 +186,6 @@ describe("createPlacement: being ready", () => {
     expect(readyButton.disabled).toBe(false);
   });
 
-  it("locks the fleet once the player is ready", () => {
-    const { view, pointer, callbacks, readyButton, shuffleButton } = placement(fits());
-
-    view.setReady(true);
-    pointer("pointerdown", 5, 5);
-    pointer("pointerup", 5, 5);
-
-    expect(callbacks.changed).not.toHaveBeenCalled();
-    expect(readyButton.disabled).toBe(true);
-    expect(shuffleButton.disabled).toBe(true);
-  });
 });
 
 describe("createPlacement: shuffling", () => {

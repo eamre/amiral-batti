@@ -126,3 +126,13 @@ export function shotText(shot: ShotDto, you: Player, opponentName: string | unde
 
   return shot.wasRandom ? `Süre doldu, rastgele atıldı: ${base}` : base;
 }
+
+export const roomText = {
+  code: "Oda kodu",
+  send: "Bu kodu arkadaşına söyle ya da gönder.",
+  copy: "Kopyala",
+};
+
+export const appText = {
+  opponentOffline: "Rakibin bağlantısı koptu. Dönmesi bekleniyor…",
+};
