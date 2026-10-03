@@ -85,3 +85,11 @@ export const lobbyText = {
       ? "Gemiler birbirine değebilir."
       : "Gemiler birbirine hiçbir yerden değemez (çapraz da). Bir gemi batınca çevresi otomatik ıska işaretlenir.",
 };
+
+export const battleText = {
+  ownWaters: "Filon",
+  enemyWaters: "Düşman suları",
+  enemyFleet: "Düşman filosu",
+  shipsLeft: (left: number, total: number): string => `${left} / ${total}`,
+  sunkSuffix: "battı",
+};

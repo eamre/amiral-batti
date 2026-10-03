@@ -271,3 +271,126 @@ p {
   height: 22px;
   accent-color: var(--accent);
 }
+
+/* ---------- Board ----------
+   The board is an SVG measured in cells, so every size below is a fraction of one cell. */
+.board {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-small);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.board__sea {
+  fill: var(--sea);
+}
+
+.board__grid {
+  fill: none;
+  stroke: var(--sea-line);
+  stroke-width: 0.04;
+}
+
+.ship__outline {
+  fill: var(--ship-line);
+  stroke: var(--ship-line);
+  stroke-width: 0.07;
+  stroke-linejoin: round;
+}
+
+.ship__body {
+  fill: var(--ship);
+}
+
+.ship__cabin {
+  fill: var(--ship-line);
+  opacity: 0.8;
+}
+
+.ship--sunk .ship__outline {
+  fill: var(--sunk);
+  stroke: var(--sunk);
+}
+
+.ship--sunk .ship__body {
+  fill: color-mix(in srgb, var(--sunk) 55%, var(--ship));
+}
+
+.ship--sunk .ship__cabin {
+  fill: var(--sunk);
+}
+
+.mark--hit line {
+  stroke: var(--hit);
+  stroke-width: 0.12;
+  stroke-linecap: round;
+}
+
+.mark--hit.mark--sunk line {
+  stroke: #fff;
+  opacity: 0.85;
+}
+
+.mark--miss {
+  fill: var(--miss);
+}
+
+.mark--ruled-out {
+  fill: var(--ruled-out);
+}
+
+/* A cell that can be fired at: invisible until the pointer or the keyboard is on it. */
+.target {
+  fill: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+@media (hover: hover) {
+  .target:hover {
+    fill: rgb(255 255 255 / 0.4);
+  }
+}
+
+.target:focus-visible {
+  fill: rgb(255 255 255 / 0.4);
+  stroke: var(--accent);
+  stroke-width: 0.08;
+}
+
+/* ---------- Enemy fleet strip ---------- */
+.fleet {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.fleet__header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.fleet__ships {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 14px;
+}
+
+.fleet__ship {
+  width: calc(var(--w) * 16px);
+  height: calc(var(--h) * 16px);
+  overflow: visible;
+}
+
+.fleet__ship--sunk {
+  opacity: 0.5;
+}

@@ -1,13 +1,15 @@
 type Child = Node | string;
 
-type Listeners = {
+export type Attributes = Readonly<Record<string, string | number | boolean>>;
+
+export type Listeners = {
   [Type in keyof HTMLElementEventMap]?: (event: HTMLElementEventMap[Type]) => void;
 };
 
 export interface ElementProps {
   readonly class?: string;
   /** `true` sets the attribute with no value (like `disabled`), `false` leaves it out. */
-  readonly attrs?: Readonly<Record<string, string | boolean>>;
+  readonly attrs?: Attributes;
   readonly on?: Listeners;
 }
 
@@ -26,18 +28,22 @@ export function h<Tag extends keyof HTMLElementTagNameMap>(
   if (props.class !== undefined) {
     element.className = props.class;
   }
-  for (const [name, value] of Object.entries(props.attrs ?? {})) {
-    if (value !== false) {
-      element.setAttribute(name, value === true ? "" : value);
-    }
-  }
+  setAttributes(element, props.attrs ?? {});
   listen(element, props.on ?? {});
   element.append(...children);
 
   return element;
 }
 
-function listen(element: HTMLElement, listeners: Listeners): void {
+export function setAttributes(element: Element, attributes: Attributes): void {
+  for (const [name, value] of Object.entries(attributes)) {
+    if (value !== false) {
+      element.setAttribute(name, value === true ? "" : String(value));
+    }
+  }
+}
+
+export function listen(element: Element, listeners: Listeners): void {
   for (const [type, listener] of Object.entries(listeners)) {
     // `Object.entries` forgets which event goes with which listener; the `Listeners` type has already checked it.
     element.addEventListener(type, listener as EventListener);
