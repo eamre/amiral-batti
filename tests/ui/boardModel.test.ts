@@ -42,13 +42,13 @@ describe("ownWatersModel", () => {
     expect(board.ships.map((ship) => ship.quarterTurns)).toEqual([0, 3]);
   });
 
-  it("marks a shot at a ship as a hit and a shot at water as a miss", () => {
+  it("marks a shot at a ship as a hit and a shot at water as water", () => {
     const board = ownWatersModel(
       gameView({ shotsAtYou: [{ row: 0, column: 1 }, { row: 3, column: 3 }] }),
     );
 
     expect(cellAt(board, 0, 1).mark).toBe("hit");
-    expect(cellAt(board, 3, 3).mark).toBe("miss");
+    expect(cellAt(board, 3, 3).mark).toBe("water");
     expect(cellAt(board, 0, 0).mark).toBe("none");
   });
 
@@ -72,12 +72,12 @@ describe("ownWatersModel", () => {
     expect(cellAt(board, 0, 0).sunk).toBe(false);
   });
 
-  it("rules out the cells that are known to be empty", () => {
+  it("marks the cells that are known to be empty the same way as a shot at water", () => {
     const board = ownWatersModel(
       gameView({ knownEmptyOwnCells: [{ row: 4, column: 4 }] }),
     );
 
-    expect(cellAt(board, 4, 4).mark).toBe("ruledOut");
+    expect(cellAt(board, 4, 4).mark).toBe("water");
   });
 
   it("never lets the viewer fire at his own waters", () => {
@@ -102,7 +102,7 @@ describe("enemyWatersModel", () => {
     );
 
     expect(cellAt(board, 2, 2).mark).toBe("hit");
-    expect(cellAt(board, 7, 1).mark).toBe("miss");
+    expect(cellAt(board, 7, 1).mark).toBe("water");
   });
 
   it("reveals a sunk ship of the opponent and flags its cells", () => {
@@ -122,13 +122,13 @@ describe("enemyWatersModel", () => {
     expect(cellAt(board, 8, 7).sunk).toBe(false);
   });
 
-  it("rules out the cells around a sunk ship", () => {
+  it("marks the cells around a sunk ship the same way as a shot at water", () => {
     const board = enemyWatersModel(
       gameView({ knownEmptyEnemyCells: [{ row: 7, column: 4 }] }),
       true,
     );
 
-    expect(cellAt(board, 7, 4).mark).toBe("ruledOut");
+    expect(cellAt(board, 7, 4).mark).toBe("water");
   });
 
   it("lets the viewer fire only at cells that are still open, when he may fire", () => {

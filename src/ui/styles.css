@@ -18,8 +18,7 @@
   --ship-line: #66788a;
   --hit: #d64545;
   --sunk: #8d2b2b;
-  --miss: #4d6177;
-  --ruled-out: #9db2c7;
+  --water: #4d6177;
   --ok: #2e9d62;
   --bad: #d64545;
 
@@ -50,8 +49,7 @@
     --ship-line: #8fa8c0;
     --hit: #ff6b6b;
     --sunk: #c24a4a;
-    --miss: #9fb3c6;
-    --ruled-out: #36516c;
+    --water: #9fb3c6;
     --ok: #4cc88a;
     --bad: #ff6b6b;
 
@@ -324,7 +322,7 @@ p {
 
 .mark--hit line {
   stroke: var(--hit);
-  stroke-width: 0.08;
+  stroke-width: 0.07;
   stroke-linecap: round;
 }
 
@@ -333,12 +331,8 @@ p {
   opacity: 0.85;
 }
 
-.mark--miss {
-  fill: var(--miss);
-}
-
-.mark--ruled-out {
-  fill: var(--ruled-out);
+.mark--water {
+  fill: var(--water);
 }
 
 /* A cell that can be fired at: invisible until the pointer or the keyboard is on it. */

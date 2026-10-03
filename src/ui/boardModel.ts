@@ -2,10 +2,10 @@ import type { CellDto, GameViewDto } from "../shared/protocol";
 
 /**
  * hit      a shot that found a ship
- * miss     a shot that found water
- * ruledOut a cell that is known to be empty (next to a sunk ship), though nobody fired at it
+ * water    a cell that is known to hold no ship: a shot that found water, or a cell next to a
+ *          sunk ship that nobody fired at. Both mean the same to the player, so both look the same.
  */
-export type CellMark = "none" | "hit" | "miss" | "ruledOut";
+export type CellMark = "none" | "hit" | "water";
 
 export interface CellModel {
   readonly row: number;
@@ -40,13 +40,13 @@ export function ownWatersModel(game: GameViewDto): BoardModel {
   }));
   const shipCells = keysOf(ships.flatMap((ship) => ship.cells), game);
   const sunkCells = keysOf(ships.filter((ship) => ship.sunk).flatMap((ship) => ship.cells), game);
-  const ruledOut = keysOf(game.knownEmptyOwnCells, game);
+  const knownEmpty = keysOf(game.knownEmptyOwnCells, game);
 
   return {
     size: game.settings.boardSize,
     ships,
     cells: allCells(game, (key) => ({
-      mark: hitCells.has(key) ? (shipCells.has(key) ? "hit" : "miss") : ruledOut.has(key) ? "ruledOut" : "none",
+      mark: hitCells.has(key) ? (shipCells.has(key) ? "hit" : "water") : knownEmpty.has(key) ? "water" : "none",
       sunk: sunkCells.has(key),
       canFire: false,
     })),
@@ -57,7 +57,7 @@ export function ownWatersModel(game: GameViewDto): BoardModel {
 export function enemyWatersModel(game: GameViewDto, canFire: boolean): BoardModel {
   const shots = new Map(game.yourShots.map((shot) => [keyOf(shot.cell, game), shot.hit]));
   const sunkCells = keysOf(game.sunkEnemyShips.flat(), game);
-  const ruledOut = keysOf(game.knownEmptyEnemyCells, game);
+  const knownEmpty = keysOf(game.knownEmptyEnemyCells, game);
 
   return {
     size: game.settings.boardSize,
@@ -66,7 +66,7 @@ export function enemyWatersModel(game: GameViewDto, canFire: boolean): BoardMode
     cells: allCells(game, (key) => {
       const shotHit = shots.get(key);
       const mark: CellMark =
-        shotHit !== undefined ? (shotHit ? "hit" : "miss") : ruledOut.has(key) ? "ruledOut" : "none";
+        shotHit !== undefined ? (shotHit ? "hit" : "water") : knownEmpty.has(key) ? "water" : "none";
 
       return { mark, sunk: sunkCells.has(key), canFire: canFire && mark === "none" };
     }),

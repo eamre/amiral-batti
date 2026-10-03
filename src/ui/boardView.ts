@@ -10,9 +10,8 @@ export interface BoardOptions {
   readonly onFire: (cell: CellDto) => void;
 }
 
-const MARK_INSET = 0.34;
-const MISS_RADIUS = 0.12;
-const RULED_OUT_RADIUS = 0.07;
+const MARK_INSET = 0.37;
+const WATER_RADIUS = 0.12;
 
 /**
  * Draws a board as one SVG that is `size` units wide, so a cell is one unit.
@@ -55,10 +54,8 @@ function markOf(cell: CellModel): SVGElement {
   switch (cell.mark) {
     case "hit":
       return cross(cell, place);
-    case "miss":
-      return svg("circle", { class: "mark mark--miss", attrs: { ...place, ...middle, r: MISS_RADIUS } });
-    case "ruledOut":
-      return svg("circle", { class: "mark mark--ruled-out", attrs: { ...place, ...middle, r: RULED_OUT_RADIUS } });
+    case "water":
+      return svg("circle", { class: "mark mark--water", attrs: { ...place, ...middle, r: WATER_RADIUS } });
     case "none":
       throw new Error("A cell without a mark is not drawn.");
   }

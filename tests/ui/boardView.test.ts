@@ -61,26 +61,27 @@ describe("renderBoard: marks", () => {
     expect(board.querySelectorAll(".mark--hit")).toHaveLength(1);
   });
 
-  it("keeps the cross small: its arms cover less than 40% of the width of the cell", () => {
+  it("keeps the cross small: its arms cover less than 30% of the width of the cell", () => {
     const { board } = enemyBoard({ yourShots: shots });
     const ends = [...board.querySelectorAll(".mark--hit line")].flatMap((line) =>
       ["x1", "x2"].map((name) => Number(line.getAttribute(name)) - 1),
     );
 
-    expect(Math.max(...ends) - Math.min(...ends)).toBeLessThan(0.4);
-    expect(Math.min(...ends)).toBeGreaterThanOrEqual(0.3);
+    expect(Math.max(...ends) - Math.min(...ends)).toBeLessThan(0.3);
+    expect(Math.min(...ends)).toBeGreaterThanOrEqual(0.35);
   });
 
   it("dots the cells that were missed", () => {
     const { board } = enemyBoard({ yourShots: shots });
 
-    expect(board.querySelectorAll(".mark--miss")).toHaveLength(2);
+    expect(board.querySelectorAll(".mark--water")).toHaveLength(2);
   });
 
-  it("dots the cells that are known to be empty, differently", () => {
-    const { board } = enemyBoard({ knownEmptyEnemyCells: [{ row: 5, column: 5 }] });
+  it("dots the cells that are known to be empty exactly like the ones that were missed", () => {
+    const missed = enemyBoard({ yourShots: [{ cell: { row: 5, column: 5 }, hit: false }] }).board;
+    const knownEmpty = enemyBoard({ knownEmptyEnemyCells: [{ row: 5, column: 5 }] }).board;
 
-    expect(board.querySelectorAll(".mark--ruled-out")).toHaveLength(1);
+    expect(knownEmpty.querySelector(".mark--water")?.outerHTML).toBe(missed.querySelector(".mark--water")?.outerHTML);
   });
 
   it("marks a cross on a sunk ship", () => {
@@ -93,7 +94,7 @@ describe("renderBoard: marks", () => {
 
   it("puts a mark on the cell it belongs to", () => {
     const { board } = enemyBoard({ yourShots: [shots[1]!] });
-    const mark = board.querySelector(".mark--miss");
+    const mark = board.querySelector(".mark--water");
 
     expect(mark?.getAttribute("data-row")).toBe("2");
     expect(mark?.getAttribute("data-column")).toBe("2");
