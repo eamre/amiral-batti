@@ -12,6 +12,7 @@ export interface BattleRules {
 
 export interface FireResult {
   readonly battle: Battle;
+  readonly position: Position;
   readonly outcome: ShotOutcome;
   readonly sunkShip?: Ship;
 }
@@ -75,6 +76,7 @@ export class Battle {
 
     return {
       battle: new Battle(fleets, nextTurn, this.rules),
+      position,
       outcome: result.outcome,
       sunkShip: result.sunkShip,
     };

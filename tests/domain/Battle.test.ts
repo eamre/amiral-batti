@@ -86,6 +86,12 @@ describe("Battle", () => {
       expect(battle.turn).toBe("first");
       expect(battle.fleetOf("second").shotsReceived).toHaveLength(0);
     });
+
+    it("tells which cell was fired at", () => {
+      const result = newBattle().fire(new Position(5, 6));
+
+      expect(result.position).toEqual(new Position(5, 6));
+    });
   });
 
   describe("winner", () => {
