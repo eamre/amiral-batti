@@ -4,7 +4,9 @@ export type GameRuleErrorCode =
   | "wrong-fleet"
   | "bad-placement"
   | "not-your-turn"
-  | "shot-not-allowed";
+  | "shot-not-allowed"
+  | "room-full"
+  | "unknown-player";
 
 /**
  * A player asked for something the rules do not allow.

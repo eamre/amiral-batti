@@ -1,31 +1,12 @@
 import { describe, expect, it } from "vitest";
-import type { ShipPlacement } from "../../src/application/buildFleet";
 import { Game } from "../../src/application/Game";
 import { viewFor } from "../../src/application/GameView";
 import { Position } from "../../src/domain/Position";
 import type { Player } from "../../src/domain/Player";
+import { allShipCells, cellsOfShipAt, placementsFrom } from "./fixtures";
 
 const NOW = 1_000;
 const SECOND = 1_000;
-const KINDS = ["carrier", "cruiser", "submarine", "destroyer", "boat"] as const;
-const SHIP_LENGTHS = [5, 4, 3, 3, 2];
-
-// The first player's ships start at column 0, the second player's at column 5,
-// so a cell tells us whose ship it belongs to.
-function placementsFrom(firstColumn: number): ShipPlacement[] {
-  return KINDS.map((kind, index) => ({
-    kind,
-    origin: new Position(index * 2, firstColumn),
-    quarterTurns: 0,
-  }));
-}
-
-function cellsOfShipAt(index: number, firstColumn: number): Position[] {
-  return Array.from(
-    { length: SHIP_LENGTHS[index] ?? 0 },
-    (_, offset) => new Position(index * 2, firstColumn + offset),
-  );
-}
 
 function gameInBattle(): Game {
   return Game.create()
@@ -120,10 +101,8 @@ describe("viewFor", () => {
 
       const json = JSON.stringify(viewFor(game, "first", NOW));
 
-      for (let index = 0; index < KINDS.length; index++) {
-        for (const cell of cellsOfShipAt(index, 5)) {
-          expect(json).not.toContain(JSON.stringify(cell));
-        }
+      for (const cell of allShipCells(5)) {
+        expect(json).not.toContain(JSON.stringify(cell));
       }
     });
 
@@ -174,7 +153,7 @@ describe("viewFor", () => {
 
   describe("after the battle", () => {
     it("shows the winner and the score to both players", () => {
-      const allCells = [0, 1, 2, 3, 4].flatMap((index) => cellsOfShipAt(index, 5));
+      const allCells = allShipCells(5);
       const game = fireAll(gameInBattle(), "first", allCells);
 
       expect(viewFor(game, "first", NOW).winner).toBe("first");
