@@ -6,7 +6,7 @@ import type { RandomSource } from "../../src/domain/random";
 import { RandomFleetGenerator } from "../../src/domain/RandomFleetGenerator";
 import type { ShipDefinition } from "../../src/domain/ShipDefinition";
 import { ShipShape } from "../../src/domain/ShipShape";
-import { FLEETS } from "../../src/domain/fleets";
+import { FLEET_PRESETS } from "../../src/domain/fleetPresets";
 
 function scriptedRandom(values: number[]): RandomSource {
   let next = 0;
@@ -104,7 +104,7 @@ describe("RandomFleetGenerator", () => {
       Math.random,
     );
 
-    for (const definitions of Object.values(FLEETS)) {
+    for (const definitions of Object.values(FLEET_PRESETS)) {
       for (let run = 0; run < 50; run++) {
         const ships = generator.generate(definitions);
 

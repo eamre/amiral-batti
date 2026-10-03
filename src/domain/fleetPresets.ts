@@ -1,9 +1,9 @@
 import type { ShipDefinition } from "./ShipDefinition";
 import { ShipShape } from "./ShipShape";
 
-export type FleetId = "classic" | "russian" | "standard";
+export type FleetPresetId = "classic" | "russian" | "standard";
 
-export const FLEETS: Record<FleetId, readonly ShipDefinition[]> = {
+export const FLEET_PRESETS: Record<FleetPresetId, readonly ShipDefinition[]> = {
   classic: [
     { kind: "carrier", shape: ShipShape.straight(5) },
     { kind: "cruiser", shape: ShipShape.straight(4) },
