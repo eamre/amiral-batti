@@ -16,6 +16,7 @@
   --sea-line: #a9c1da;
   --ship: #9fb3c6;
   --ship-line: #66788a;
+  --ship-deck: #b9c9d8;
   --hit: #d64545;
   --sunk: #8d2b2b;
   --water: #4d6177;
@@ -47,6 +48,7 @@
     --sea-line: #2a4562;
     --ship: #587592;
     --ship-line: #8fa8c0;
+    --ship-deck: #6f8dab;
     --hit: #ff6b6b;
     --sunk: #c24a4a;
     --water: #9fb3c6;
@@ -434,9 +436,18 @@ p {
   fill: var(--ship);
 }
 
+.ship__deck {
+  stroke: var(--ship-deck);
+  stroke-width: 0.05;
+  stroke-linecap: round;
+}
+
 .ship__cabin {
   fill: var(--ship-line);
-  opacity: 0.8;
+}
+
+.ship__window {
+  fill: var(--ship-deck);
 }
 
 .ship--sunk .ship__outline {
@@ -450,6 +461,14 @@ p {
 
 .ship--sunk .ship__cabin {
   fill: var(--sunk);
+}
+
+.ship--sunk .ship__deck {
+  stroke: color-mix(in srgb, var(--sunk) 30%, var(--ship-deck));
+}
+
+.ship--sunk .ship__window {
+  fill: color-mix(in srgb, var(--sunk) 30%, var(--ship-deck));
 }
 
 .mark--hit line {
@@ -541,6 +560,14 @@ p {
   fill: var(--bad);
 }
 
+.ship--misplaced .ship__deck {
+  stroke: color-mix(in srgb, var(--bad) 30%, var(--ship-deck));
+}
+
+.ship--misplaced .ship__window {
+  fill: color-mix(in srgb, var(--bad) 30%, var(--ship-deck));
+}
+
 .ship--lifted .ship__outline {
   fill: var(--ok);
   stroke: var(--ok);
@@ -552,6 +579,14 @@ p {
 
 .ship--lifted .ship__cabin {
   fill: var(--ok);
+}
+
+.ship--lifted .ship__deck {
+  stroke: color-mix(in srgb, var(--ok) 30%, var(--ship-deck));
+}
+
+.ship--lifted .ship__window {
+  fill: color-mix(in srgb, var(--ok) 30%, var(--ship-deck));
 }
 
 .hint--center {

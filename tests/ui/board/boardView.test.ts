@@ -45,8 +45,8 @@ describe("renderBoard", () => {
       hull.getAttribute("points"),
     );
 
-    expect(facingRight).toContain("2.94,0.5");
-    expect(facingUp).toContain("5.5,5.06");
+    expect(facingRight).toContain("2.95,0.5");
+    expect(facingUp).toContain("5.5,5.05");
   });
 
   it("draws a sunk ship as sunk", () => {

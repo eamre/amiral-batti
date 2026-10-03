@@ -95,7 +95,7 @@ describe("createPlacement: the board", () => {
     const facingLeft = new Ship(ShipShape.straight(3), new Position(0, 0), 2);
     const { board } = placement(editorOf(facingLeft));
 
-    expect(board.querySelector(".ship__body polygon")?.getAttribute("points")).toContain("0.06,0.5");
+    expect(board.querySelector(".ship__body polygon")?.getAttribute("points")).toContain("0.05,0.5");
   });
 
   it("turns the bow with every tap: right, down, left, up and right again", () => {

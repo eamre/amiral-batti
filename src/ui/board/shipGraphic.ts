@@ -1,6 +1,6 @@
 import type { CellDto } from "../../shared/protocol";
 import { svg } from "../dom/svg";
-import { shipArt, type Polygon, type Rect } from "./shipArt";
+import { shipArt, type Polygon, type Rect, type Segment } from "./shipArt";
 
 /**
  * afloat     a ship at rest
@@ -16,14 +16,15 @@ export type ShipLook = "afloat" | "sunk" | "misplaced" | "lifted";
  * line left between them.
  */
 export function shipGraphic(cells: readonly CellDto[], look: ShipLook, quarterTurns = 0): SVGGElement {
-  const { hull, cabins } = shipArt(cells, quarterTurns);
+  const { hull, deckLines, cabins, windows } = shipArt(cells, quarterTurns);
 
   return svg(
     "g",
     { class: look === "afloat" ? "ship" : `ship ship--${look}` },
     svg("g", { class: "ship__outline" }, ...hull.map(polygon)),
     svg("g", { class: "ship__body" }, ...hull.map(polygon)),
-    ...cabins.map(cabin),
+    ...deckLines.map(deckLine),
+    ...cabins.flatMap((cabinRect, index) => [cabin(cabinRect), window(windows[index]!)]),
   );
 }
 
@@ -32,10 +33,25 @@ function polygon(points: Polygon): SVGPolygonElement {
   return svg("polygon", { attrs: { points: text } });
 }
 
-function cabin({ x, y, width, height }: Rect): SVGRectElement {
+function deckLine({ from, to }: Segment): SVGLineElement {
+  return svg("line", {
+    class: "ship__deck",
+    attrs: { x1: round(from.x), y1: round(from.y), x2: round(to.x), y2: round(to.y) },
+  });
+}
+
+function cabin(rect: Rect): SVGRectElement {
+  return roundedRect("ship__cabin", rect, 0.12);
+}
+
+function window(rect: Rect): SVGRectElement {
+  return roundedRect("ship__window", rect, 0.05);
+}
+
+function roundedRect(className: string, { x, y, width, height }: Rect, radius: number): SVGRectElement {
   return svg("rect", {
-    class: "ship__cabin",
-    attrs: { x: round(x), y: round(y), width: round(width), height: round(height), rx: 0.05 },
+    class: className,
+    attrs: { x: round(x), y: round(y), width: round(width), height: round(height), rx: radius },
   });
 }
 
