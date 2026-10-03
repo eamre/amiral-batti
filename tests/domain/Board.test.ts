@@ -7,23 +7,23 @@ import { Ship } from "../../src/domain/Ship";
 describe("Board.contains", () => {
   const board = new Board(10);
 
-  it("tahtanın ortasındaki konum içeridedir", () => {
+  it("a position in the middle of the board is inside", () => {
     expect(board.contains(new Position(5, 5))).toBe(true);
   });
 
-  it("dört köşe de içeridedir", () => {
+  it("the four corners are inside", () => {
     expect(board.contains(new Position(0, 0))).toBe(true);
     expect(board.contains(new Position(0, 9))).toBe(true);
     expect(board.contains(new Position(9, 0))).toBe(true);
     expect(board.contains(new Position(9, 9))).toBe(true);
   });
 
-  it("negatif satır ya da sütun dışarıdadır", () => {
+  it("a negative row or column is outside", () => {
     expect(board.contains(new Position(-1, 3))).toBe(false);
     expect(board.contains(new Position(3, -1))).toBe(false);
   });
 
-  it("boyuta eşit ya da büyük satır ya da sütun dışarıdadır", () => {
+  it("a row or column equal to or greater than the size is outside", () => {
     expect(board.contains(new Position(10, 3))).toBe(false);
     expect(board.contains(new Position(3, 10))).toBe(false);
   });
@@ -36,7 +36,7 @@ describe("Board.neighborsOf", () => {
   const toCoordinates = (positions: Position[]) =>
     positions.map((p) => `${p.row},${p.column}`).sort();
 
-  it("ortadaki karenin 8 komşusu vardır", () => {
+  it("a cell in the middle has 8 neighbors", () => {
     const neighbors = board.neighborsOf(new Position(1, 1));
 
     expect(toCoordinates(neighbors)).toEqual([
@@ -51,13 +51,13 @@ describe("Board.neighborsOf", () => {
     ]);
   });
 
-  it("köşedeki karenin 3 komşusu vardır", () => {
+  it("a corner cell has 3 neighbors", () => {
     const neighbors = board.neighborsOf(new Position(0, 0));
 
     expect(toCoordinates(neighbors)).toEqual(["0,1", "1,0", "1,1"]);
   });
 
-  it("kenardaki karenin 5 komşusu vardır", () => {
+  it("an edge cell has 5 neighbors", () => {
     const neighbors = board.neighborsOf(new Position(0, 1));
 
     expect(toCoordinates(neighbors)).toEqual([
@@ -69,7 +69,7 @@ describe("Board.neighborsOf", () => {
     ]);
   });
 
-  it("karenin kendisi komşuları arasında değildir", () => {
+  it("a cell is not its own neighbor", () => {
     const neighbors = board.neighborsOf(new Position(1, 1));
 
     expect(neighbors.some((n) => n.equals(new Position(1, 1)))).toBe(false);
@@ -92,7 +92,7 @@ describe("Board.containsShip", () => {
   });
 });
 
-describe("pulledInside", () => {
+describe("Board.pulledInside", () => {
   it("keeps a ship that is already inside where it is", () => {
     const board = new Board(5);
     const ship = new Ship(ShipShape.straight(3), new Position(1, 1));
