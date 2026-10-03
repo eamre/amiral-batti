@@ -1,4 +1,5 @@
 import { BOARD_SIZE } from "./domain/constants";
+import "./ui/styles.css";
 
 const app = document.getElementById("app");
 if (app) {

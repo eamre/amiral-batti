@@ -1,0 +1,273 @@
+/* ---------- Tokens ----------
+   Every colour and size used below comes from here, so a theme is just another set of values. */
+:root {
+  color-scheme: light;
+
+  --page: #f3f6fb;
+  --card: #ffffff;
+  --ink: #14202b;
+  --muted: #5d6c7d;
+  --line: #c9d6e4;
+  --accent: #0b6bcb;
+  --accent-ink: #ffffff;
+  --danger: #c93a3a;
+
+  --sea: #d0e2f2;
+  --sea-line: #a9c1da;
+  --ship: #9fb3c6;
+  --ship-line: #66788a;
+  --hit: #d64545;
+  --sunk: #8d2b2b;
+  --miss: #4d6177;
+  --ruled-out: #9db2c7;
+  --ok: #2e9d62;
+  --bad: #d64545;
+
+  --radius: 14px;
+  --radius-small: 10px;
+  --gap: 12px;
+  --shadow: 0 2px 10px rgb(20 32 43 / 8%);
+  --touch: 48px;
+}
+
+/* The system's dark mode, unless the page was told to stay light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --page: #0e1621;
+    --card: #17222f;
+    --ink: #e8eef5;
+    --muted: #93a3b5;
+    --line: #2c3e52;
+    --accent: #4aa3ff;
+    --accent-ink: #06182b;
+    --danger: #ff7b7b;
+
+    --sea: #14283d;
+    --sea-line: #2a4562;
+    --ship: #587592;
+    --ship-line: #8fa8c0;
+    --hit: #ff6b6b;
+    --sunk: #c24a4a;
+    --miss: #9fb3c6;
+    --ruled-out: #36516c;
+    --ok: #4cc88a;
+    --bad: #ff6b6b;
+
+    --shadow: 0 2px 10px rgb(0 0 0 / 35%);
+  }
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Keeps a finger-drag on the board from scrolling or pull-to-refreshing the page. */
+  overscroll-behavior: contain;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  max-width: 520px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Header ---------- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.connection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.connection::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.connection[data-state="online"]::before {
+  background: var(--ok);
+}
+
+.connection[data-state="offline"]::before {
+  background: var(--bad);
+}
+
+/* ---------- Cards and text ---------- */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: 18px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- Buttons ---------- */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--touch);
+  padding: 0 18px;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.button--primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.button--block {
+  width: 100%;
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* A group of buttons that share a row equally. */
+.row {
+  display: flex;
+  gap: var(--gap);
+}
+
+.row > * {
+  flex: 1;
+}
+
+/* ---------- Fields ---------- */
+.field {
+  width: 100%;
+  min-height: var(--touch);
+  padding: 0 14px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-small);
+  background: var(--page);
+}
+
+.field--code {
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-weight: 700;
+}
+
+/* ---------- A choice of one among a few (fleet presets) ---------- */
+.choice {
+  display: flex;
+  gap: 8px;
+}
+
+.choice__option {
+  flex: 1;
+  min-height: var(--touch);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.choice__option[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* ---------- A screen is a column of cards ---------- */
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+/* ---------- A checkbox with its words ---------- */
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch);
+  cursor: pointer;
+}
+
+.check input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+}
