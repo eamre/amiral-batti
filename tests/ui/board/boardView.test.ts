@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { describe, expect, it, vi } from "vitest";
 import { enemyWatersModel, ownWatersModel } from "../../../src/ui/board/boardModel";
+import { viewBoxOf } from "../../../src/ui/board/boardLabels";
 import { renderBoard } from "../../../src/ui/board/boardView";
 import { gameView } from "../fixtures";
 
@@ -15,7 +16,15 @@ describe("renderBoard", () => {
   it("is as wide and high as the board has cells", () => {
     const { board } = enemyBoard();
 
-    expect(board.getAttribute("viewBox")).toBe("0 0 10 10");
+    expect(board.getAttribute("viewBox")).toBe(viewBoxOf(10));
+  });
+
+  it("labels the rows with letters and the columns with numbers", () => {
+    const { board } = enemyBoard();
+
+    expect([...board.querySelectorAll(".board__labels text")].map((label) => label.textContent).join("")).toBe(
+      "ABCDEFGHIJ12345678910",
+    );
   });
 
   it("carries a name for those who cannot see it", () => {
@@ -130,7 +139,7 @@ describe("renderBoard: firing", () => {
   it("names each target by its cell", () => {
     const { board } = enemyBoard();
 
-    expect(board.querySelector('.target[data-row="3"][data-column="2"]')?.getAttribute("aria-label")).toBe("C4");
+    expect(board.querySelector('.target[data-row="3"][data-column="2"]')?.getAttribute("aria-label")).toBe("D3");
   });
 
   it("fires at the cell that was clicked", () => {

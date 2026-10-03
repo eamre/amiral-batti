@@ -2,6 +2,7 @@ import type { CellDto } from "../../shared/protocol";
 import type { BoardModel, CellModel } from "./boardModel";
 import { cellName } from "./cellName";
 import { svg } from "../dom/svg";
+import { boardLabels, viewBoxOf } from "./boardLabels";
 import { shipGraphic } from "./shipGraphic";
 
 export interface BoardOptions {
@@ -12,19 +13,21 @@ export interface BoardOptions {
 
 const MARK_INSET = 0.37;
 const WATER_RADIUS = 0.12;
+/** How round the corners of the sea are, in cells. */
+const SEA_CORNER = 0.3;
 
 /**
- * Draws a board as one SVG that is `size` units wide, so a cell is one unit.
+ * Draws a board as one SVG whose grid is `size` units wide, so a cell is one unit, with its labels around it.
  * It is drawn again from scratch on every change: a hundred cells cost nothing.
  *
- * From bottom to top: sea, grid, ships, marks, targets.
+ * From bottom to top: labels, sea, grid, ships, marks, targets.
  */
 export function renderBoard(model: BoardModel, options: BoardOptions): SVGSVGElement {
   return svg(
     "svg",
     {
       class: "board",
-      attrs: { viewBox: `0 0 ${model.size} ${model.size}`, role: "group", "aria-label": options.label },
+      attrs: { viewBox: viewBoxOf(model.size), role: "group", "aria-label": options.label },
     },
     ...seaAndGrid(model.size),
     ...model.ships.map((ship) => shipGraphic(ship.cells, ship.sunk ? "sunk" : "afloat", ship.quarterTurns)),
@@ -33,9 +36,13 @@ export function renderBoard(model: BoardModel, options: BoardOptions): SVGSVGEle
   );
 }
 
-/** The bottom two layers, which every board has. */
+/** The bottom layers, which every board has: the labels around the sea, and the grid on it. */
 export function seaAndGrid(size: number): SVGElement[] {
-  return [svg("rect", { class: "board__sea", attrs: { width: size, height: size } }), grid(size)];
+  return [
+    boardLabels(size),
+    svg("rect", { class: "board__sea", attrs: { width: size, height: size, rx: SEA_CORNER } }),
+    grid(size),
+  ];
 }
 
 function grid(size: number): SVGPathElement {

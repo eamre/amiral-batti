@@ -5,6 +5,7 @@ import { DEFAULT_GAME_SETTINGS } from "../../../src/application/GameSettings";
 import { Position } from "../../../src/domain/Position";
 import { Ship } from "../../../src/domain/Ship";
 import { ShipShape } from "../../../src/domain/ShipShape";
+import { LABEL_MARGIN, viewBoxOf } from "../../../src/ui/board/boardLabels";
 import { createPlacement } from "../../../src/ui/placement/placement";
 import { placementText } from "../../../src/ui/texts/texts";
 
@@ -31,15 +32,19 @@ function placement(initial: FleetEditor) {
   const view = createPlacement({ initial, random: stream(7), ...callbacks });
   const board = view.element.querySelector<SVGSVGElement>(".board")!;
 
-  // The board is 100 pixels wide for 10 cells, so a cell is 10 pixels.
+  // A cell is 10 pixels. The picture also holds the labels, so it is wider than the 100 pixels of the grid.
+  const margin = LABEL_MARGIN * 10;
   Object.defineProperties(board, {
-    getBoundingClientRect: { value: () => ({ left: 0, top: 0, width: 100, height: 100 }) },
+    getBoundingClientRect: { value: () => ({ left: 0, top: 0, width: 100 + margin, height: 100 + margin }) },
     setPointerCapture: { value: () => undefined },
   });
 
   const find = <T extends HTMLElement>(role: string) => view.element.querySelector<T>(`[data-role=${role}]`)!;
+  /** The pointer is told in pixels of the grid: (0, 0) is its top-left corner, under the labels. */
   const pointer = (type: string, x: number, y: number) =>
-    board.dispatchEvent(new PointerEvent(type, { clientX: x, clientY: y, pointerId: 1, bubbles: true }));
+    board.dispatchEvent(
+      new PointerEvent(type, { clientX: x + margin, clientY: y + margin, pointerId: 1, bubbles: true }),
+    );
 
   return {
     view,
@@ -73,6 +78,13 @@ const onTopOfEachOther = () => editorOf(ship(3, 0, 0), ship(2, 0, 2));
 describe("createPlacement: the board", () => {
   it("keeps the board in a slot that gives way when the window is short", () => {
     expect(placement(fits()).view.element.querySelector(".board-slot > .board--placing")).not.toBeNull();
+  });
+
+  it("labels the rows and columns like the other boards", () => {
+    const { board } = placement(fits());
+
+    expect(board.getAttribute("viewBox")).toBe(viewBoxOf(10));
+    expect(board.querySelectorAll(".board__labels text")).toHaveLength(20);
   });
 
   it("shows every ship of the fleet", () => {

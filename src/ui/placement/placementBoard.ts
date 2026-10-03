@@ -1,4 +1,5 @@
 import { svg } from "../dom/svg";
+import { viewBoxOf } from "../board/boardLabels";
 import { seaAndGrid } from "../board/boardView";
 import type { PlacementModel } from "./placementModel";
 import { shipGraphic } from "../board/shipGraphic";
@@ -19,7 +20,7 @@ export function createPlacementBoard(size: number, label: string): PlacementBoar
     "svg",
     {
       class: "board board--placing",
-      attrs: { viewBox: `0 0 ${size} ${size}`, role: "group", "aria-label": label },
+      attrs: { viewBox: viewBoxOf(size), role: "group", "aria-label": label },
     },
     ...seaAndGrid(size),
     ships,
