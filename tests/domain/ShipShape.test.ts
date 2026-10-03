@@ -106,4 +106,46 @@ describe("ShipShape", () => {
       expect(shape.width).toBe(1);
     });
   });
+
+  describe("tShaped", () => {
+    it("is a bar of three with one extra cell next to its middle", () => {
+      const shape = ShipShape.tShaped();
+
+      expect(shape.cells).toEqual([
+        new Position(0, 0),
+        new Position(1, 0),
+        new Position(2, 0),
+        new Position(1, 1),
+      ]);
+    });
+
+    it("is three rows high and two columns wide", () => {
+      const shape = ShipShape.tShaped();
+
+      expect(shape.height).toBe(3);
+      expect(shape.width).toBe(2);
+    });
+  });
+
+  describe("staggeredPair", () => {
+    it("is two bars of three side by side, the right one shifted one row up", () => {
+      const shape = ShipShape.staggeredPair();
+
+      expect(shape.cells).toEqual([
+        new Position(1, 0),
+        new Position(2, 0),
+        new Position(3, 0),
+        new Position(0, 1),
+        new Position(1, 1),
+        new Position(2, 1),
+      ]);
+    });
+
+    it("is four rows high and two columns wide", () => {
+      const shape = ShipShape.staggeredPair();
+
+      expect(shape.height).toBe(4);
+      expect(shape.width).toBe(2);
+    });
+  });
 });

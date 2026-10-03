@@ -23,6 +23,26 @@ export class ShipShape {
     return new ShipShape(cells);
   }
 
+  static tShaped(): ShipShape {
+    return new ShipShape([
+      new Position(0, 0),
+      new Position(1, 0),
+      new Position(2, 0),
+      new Position(1, 1),
+    ]);
+  }
+
+  static staggeredPair(): ShipShape {
+    return new ShipShape([
+      new Position(1, 0),
+      new Position(2, 0),
+      new Position(3, 0),
+      new Position(0, 1),
+      new Position(1, 1),
+      new Position(2, 1),
+    ]);
+  }
+
   /** Geminin kare sayısı. */
   get length(): number {
     return this.cells.length;
