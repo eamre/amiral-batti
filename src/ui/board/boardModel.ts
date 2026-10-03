@@ -56,13 +56,13 @@ export function ownWatersModel(game: GameViewDto): BoardModel {
 /** The opponent's waters: only what the viewer has found out so far. */
 export function enemyWatersModel(game: GameViewDto, canFire: boolean): BoardModel {
   const shots = new Map(game.yourShots.map((shot) => [keyOf(shot.cell, game), shot.hit]));
-  const sunkCells = keysOf(game.sunkEnemyShips.flat(), game);
+  const sunkCells = keysOf(game.sunkEnemyShips.flatMap((ship) => ship.cells), game);
   const knownEmpty = keysOf(game.knownEmptyEnemyCells, game);
 
   return {
     size: game.settings.boardSize,
-    // The server does not tell how an enemy ship was turned, so its bow takes the default direction.
-    ships: game.sunkEnemyShips.map((cells) => ({ cells, quarterTurns: 0, sunk: true })),
+    // A ship is only shown once it has sunk, and then the server also tells how it stood.
+    ships: game.sunkEnemyShips.map(({ cells, quarterTurns }) => ({ cells, quarterTurns, sunk: true })),
     cells: allCells(game, (key) => {
       const shotHit = shots.get(key);
       const mark: CellMark =

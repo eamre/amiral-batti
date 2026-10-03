@@ -49,9 +49,16 @@ describe("renderBoard", () => {
     expect(facingUp).toContain("5.5,5.05");
   });
 
+  it("draws the bow of a sunk ship of the opponent on the side it stood", () => {
+    const sunk = [{ row: 1, column: 1 }, { row: 1, column: 2 }, { row: 1, column: 3 }];
+    const { board } = enemyBoard({ sunkEnemyShips: [{ cells: sunk, quarterTurns: 2 }] });
+
+    expect(board.querySelector(".ship__body polygon")?.getAttribute("points")).toContain("1.05,1.5");
+  });
+
   it("draws a sunk ship as sunk", () => {
     const sunk = [{ row: 1, column: 1 }, { row: 1, column: 2 }];
-    const { board } = enemyBoard({ sunkEnemyShips: [sunk] });
+    const { board } = enemyBoard({ sunkEnemyShips: [{ cells: sunk, quarterTurns: 0 }] });
 
     expect(board.querySelectorAll(".ship--sunk")).toHaveLength(1);
   });
@@ -96,7 +103,7 @@ describe("renderBoard: marks", () => {
   it("marks a cross on a sunk ship", () => {
     const sunk = [{ row: 1, column: 1 }, { row: 1, column: 2 }];
     const hits = sunk.map((cell) => ({ cell, hit: true }));
-    const { board } = enemyBoard({ yourShots: hits, sunkEnemyShips: [sunk] });
+    const { board } = enemyBoard({ yourShots: hits, sunkEnemyShips: [{ cells: sunk, quarterTurns: 0 }] });
 
     expect(board.querySelectorAll(".mark--hit.mark--sunk")).toHaveLength(2);
   });

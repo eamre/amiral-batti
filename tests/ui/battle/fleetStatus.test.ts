@@ -9,6 +9,9 @@ const horizontal = (row: number, column: number, length: number): CellDto[] =>
 const vertical = (row: number, column: number, length: number): CellDto[] =>
   Array.from({ length }, (_, offset) => ({ row: row + offset, column }));
 
+/** A sunk ship as the server reports it. How it was turned does not matter for the fleet status. */
+const sunk = (cells: CellDto[]) => ({ cells, quarterTurns: 0 });
+
 const kindsSunk = (game: ReturnType<typeof gameView>) =>
   enemyFleetStatus(game)
     .filter((entry) => entry.sunk)
@@ -29,25 +32,25 @@ describe("enemyFleetStatus", () => {
   });
 
   it("marks the ship that has the shape of a sunk ship", () => {
-    const game = gameView({ sunkEnemyShips: [horizontal(4, 4, 2)] });
+    const game = gameView({ sunkEnemyShips: [sunk(horizontal(4, 4, 2))] });
 
     expect(kindsSunk(game)).toEqual(["boat"]);
   });
 
   it("recognizes a sunk ship wherever it lay and however it was turned", () => {
-    const game = gameView({ sunkEnemyShips: [vertical(3, 7, 5)] });
+    const game = gameView({ sunkEnemyShips: [sunk(vertical(3, 7, 5))] });
 
     expect(kindsSunk(game)).toEqual(["carrier"]);
   });
 
   it("marks only one of two equal ships for one sunk ship", () => {
-    const game = gameView({ sunkEnemyShips: [horizontal(0, 0, 3)] });
+    const game = gameView({ sunkEnemyShips: [sunk(horizontal(0, 0, 3))] });
 
     expect(kindsSunk(game)).toEqual(["submarine"]);
   });
 
   it("marks both equal ships when both have sunk", () => {
-    const game = gameView({ sunkEnemyShips: [horizontal(0, 0, 3), vertical(5, 5, 3)] });
+    const game = gameView({ sunkEnemyShips: [sunk(horizontal(0, 0, 3)), sunk(vertical(5, 5, 3))] });
 
     expect(kindsSunk(game)).toEqual(["submarine", "destroyer"]);
   });
@@ -61,13 +64,13 @@ describe("enemyFleetStatus", () => {
     ];
     const settings = { boardSize: 10, fleetPreset: "standard", allowTouching: false, turnSeconds: 20 } as const;
 
-    expect(kindsSunk(gameView({ settings, sunkEnemyShips: [tShaped] }))).toEqual(["tanker"]);
-    expect(kindsSunk(gameView({ settings, sunkEnemyShips: [horizontal(0, 0, 4)] }))).toEqual(["cruiser"]);
+    expect(kindsSunk(gameView({ settings, sunkEnemyShips: [sunk(tShaped)] }))).toEqual(["tanker"]);
+    expect(kindsSunk(gameView({ settings, sunkEnemyShips: [sunk(horizontal(0, 0, 4))] }))).toEqual(["cruiser"]);
   });
 
   it("counts the three boats of the russian fleet one by one", () => {
     const settings = { boardSize: 10, fleetPreset: "russian", allowTouching: false, turnSeconds: 20 } as const;
-    const game = gameView({ settings, sunkEnemyShips: [horizontal(0, 0, 2), vertical(5, 5, 2)] });
+    const game = gameView({ settings, sunkEnemyShips: [sunk(horizontal(0, 0, 2)), sunk(vertical(5, 5, 2))] });
 
     expect(kindsSunk(game)).toEqual(["boat", "boat"]);
   });
@@ -75,7 +78,7 @@ describe("enemyFleetStatus", () => {
 
 describe("shipsLeft", () => {
   it("counts the ships that have not sunk", () => {
-    const game = gameView({ sunkEnemyShips: [horizontal(0, 0, 2), horizontal(2, 0, 5)] });
+    const game = gameView({ sunkEnemyShips: [sunk(horizontal(0, 0, 2)), sunk(horizontal(2, 0, 5))] });
 
     expect(shipsLeft(enemyFleetStatus(game))).toBe(3);
   });

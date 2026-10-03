@@ -5,7 +5,9 @@ import { enemyFleetStatus } from "../../../src/ui/battle/fleetStatus";
 import { gameView } from "../fixtures";
 
 const strip = (changes = {}) => createFleetStrip(enemyFleetStatus(gameView(changes)));
-const boatSunk = { sunkEnemyShips: [[{ row: 4, column: 4 }, { row: 4, column: 5 }]] };
+const boatSunk = {
+  sunkEnemyShips: [{ cells: [{ row: 4, column: 4 }, { row: 4, column: 5 }], quarterTurns: 0 }],
+};
 
 describe("createFleetStrip", () => {
   it("shows one ship for every ship of the fleet", () => {

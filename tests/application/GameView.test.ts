@@ -122,8 +122,23 @@ describe("viewFor", () => {
 
       const view = viewFor(game, "first", NOW);
 
-      expect(view.sunkEnemyShips).toEqual([secondsBoat]);
+      expect(view.sunkEnemyShips).toEqual([{ cells: secondsBoat, quarterTurns: 0 }]);
       expect(viewFor(game, "second", NOW).sunkEnemyShips).toEqual([]);
+    });
+
+    it("tells how a sunk ship of the opponent had been turned, so that its bow can be drawn the way it stood", () => {
+      const turnedBoat = { kind: "boat", origin: new Position(7, 9), quarterTurns: 3 } as const;
+      const game = Game.create()
+        .markReady("first", placementsFrom(0), NOW)
+        .markReady("second", [...placementsFrom(5).slice(0, 4), turnedBoat], NOW);
+      const sunk = fireAll(game, "first", [new Position(7, 9), new Position(8, 9)]);
+
+      const [ship, ...others] = viewFor(sunk, "first", NOW).sunkEnemyShips;
+
+      expect(others).toEqual([]);
+      expect(ship?.quarterTurns).toBe(3);
+      expect(ship?.cells).toHaveLength(2);
+      expect(ship?.cells).toEqual(expect.arrayContaining([new Position(7, 9), new Position(8, 9)]));
     });
 
     it("lists the cells around a sunk ship as known to be empty", () => {

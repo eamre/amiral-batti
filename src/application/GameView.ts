@@ -1,11 +1,12 @@
 import type { Fleet } from "../domain/Fleet";
 import { opponentOf, type Player } from "../domain/Player";
 import type { Position } from "../domain/Position";
+import type { Ship } from "../domain/Ship";
 import type { Game, GamePhase } from "./Game";
 import type { GameSettings } from "./GameSettings";
 
-/** One of the viewer's own ships: the cells it covers and how far it was turned (it shows which way the bow points). */
-export interface OwnShipView {
+/** A ship the viewer is allowed to see: the cells it covers and how far it was turned (it shows which way the bow points). */
+export interface ShipView {
   readonly cells: readonly Position[];
   readonly quarterTurns: number;
 }
@@ -30,10 +31,11 @@ export interface GameView {
   readonly yourTurn: boolean;
   readonly secondsLeft?: number;
   readonly winner?: Player;
-  readonly yourShips: readonly OwnShipView[];
+  readonly yourShips: readonly ShipView[];
   readonly shotsAtYou: readonly Position[];
   readonly yourShots: readonly ShotView[];
-  readonly sunkEnemyShips: readonly (readonly Position[])[];
+  /** The opponent's ships that have sunk. A ship that is still afloat is never in here. */
+  readonly sunkEnemyShips: readonly ShipView[];
   /** Cells around sunk enemy ships that cannot hold a ship and were not fired at. */
   readonly knownEmptyEnemyCells: readonly Position[];
   /** The same around the viewer's own sunk ships: the opponent knows they are empty too. */
@@ -55,13 +57,17 @@ export function viewFor(game: Game, you: Player, now: number): GameView {
     yourTurn: game.turn === you,
     secondsLeft: game.timeLeft(now),
     winner: game.winner,
-    yourShips: yourFleet?.ships.map((ship) => ({ cells: ship.cells, quarterTurns: ship.quarterTurns })) ?? [],
+    yourShips: yourFleet?.ships.map(shipViewOf) ?? [],
     shotsAtYou: yourFleet?.shotsReceived ?? [],
     yourShots: shotsAt(enemyFleet),
-    sunkEnemyShips: enemyFleet?.sunkShips.map((ship) => ship.cells) ?? [],
+    sunkEnemyShips: enemyFleet?.sunkShips.map(shipViewOf) ?? [],
     knownEmptyEnemyCells: emptyCellsNotFiredAt(game, opponent),
     knownEmptyOwnCells: emptyCellsNotFiredAt(game, you),
   };
+}
+
+function shipViewOf(ship: Ship): ShipView {
+  return { cells: ship.cells, quarterTurns: ship.quarterTurns };
 }
 
 function shotsAt(fleet: Fleet | undefined): ShotView[] {

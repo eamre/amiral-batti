@@ -19,7 +19,7 @@ export interface FleetStatusEntry {
  * ship in the corner is the same ship as a horizontal one in the middle.
  */
 export function enemyFleetStatus(game: GameViewDto): readonly FleetStatusEntry[] {
-  const unmatched = game.sunkEnemyShips.map(shapeOf);
+  const unmatched = game.sunkEnemyShips.map((ship) => shapeOf(ship.cells));
 
   return FLEET_PRESETS[game.settings.fleetPreset].map(({ kind, shape }) => {
     const index = unmatched.findIndex((sunkShape) => hasSameShape(sunkShape, shape));

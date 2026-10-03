@@ -110,7 +110,7 @@ describe("enemyWatersModel", () => {
 
     const board = enemyWatersModel(
       gameView({
-        sunkEnemyShips: [sunk],
+        sunkEnemyShips: [{ cells: sunk, quarterTurns: 0 }],
         yourShots: sunk.map((cell) => ({ cell, hit: true })),
       }),
       true,
@@ -120,6 +120,14 @@ describe("enemyWatersModel", () => {
     expect(cellAt(board, 8, 5).sunk).toBe(true);
     expect(cellAt(board, 8, 6).sunk).toBe(true);
     expect(cellAt(board, 8, 7).sunk).toBe(false);
+  });
+
+  it("turns a sunk ship of the opponent the way it stood", () => {
+    const sunk = [{ row: 8, column: 5 }, { row: 8, column: 6 }];
+
+    const board = enemyWatersModel(gameView({ sunkEnemyShips: [{ cells: sunk, quarterTurns: 2 }] }), true);
+
+    expect(board.ships.map((ship) => ship.quarterTurns)).toEqual([2]);
   });
 
   it("marks the cells around a sunk ship the same way as a shot at water", () => {

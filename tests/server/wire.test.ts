@@ -87,6 +87,27 @@ describe("toRoomViewDto", () => {
     expect(dto.game.yourShots[0]).toStrictEqual({ cell: { row: 0, column: 5 }, hit: true });
   });
 
+  it("carries the turn of a sunk ship of the opponent along with its cells", () => {
+    const turnedBoat = { kind: "boat", origin: new Position(7, 9), quarterTurns: 3 } as const;
+    const room = Room.open("ABCD", DEFAULT_GAME_SETTINGS, AHMET)
+      .join(AYSE)
+      .markReady(AHMET.token, placementsFrom(0), NOW)
+      .markReady(AYSE.token, [...placementsFrom(5).slice(0, 4), turnedBoat], NOW);
+    const fired = [new Position(7, 9), new Position(8, 9)].reduce(
+      (current, cell) => current.fire(AHMET.token, cell, NOW).room,
+      room,
+    );
+
+    const [ship, ...others] = toRoomViewDto(fired.viewFor(AHMET.token, NOW)).game.sunkEnemyShips;
+
+    expect(others).toEqual([]);
+    expect(ship?.quarterTurns).toBe(3);
+    expect(ship?.cells).toHaveLength(2);
+    expect(ship?.cells).toEqual(expect.arrayContaining([{ row: 7, column: 9 }, { row: 8, column: 9 }]));
+    // Plain data: no Position objects are left in it.
+    expect(JSON.parse(JSON.stringify(ship))).toStrictEqual(ship);
+  });
+
   it("keeps names, code and rematch votes", () => {
     const dto = toRoomViewDto(roomInBattle().viewFor(AYSE.token, NOW));
 

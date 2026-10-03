@@ -1,12 +1,13 @@
 import type { ShipPlacement } from "../application/buildFleet";
 import type { ShotReport } from "../application/Game";
-import type { GameView } from "../application/GameView";
+import type { GameView, ShipView } from "../application/GameView";
 import type { RoomView } from "../application/RoomView";
 import { Position } from "../domain/Position";
 import type {
   CellDto,
   GameViewDto,
   RoomViewDto,
+  ShipDto,
   ShipPlacementDto,
   ShotDto,
 } from "../shared/protocol";
@@ -27,6 +28,10 @@ export function toPlacements(ships: readonly ShipPlacementDto[]): ShipPlacement[
 /** Domain objects in, plain data out (messages to the browser). */
 export function toCellDto(position: Position): CellDto {
   return { row: position.row, column: position.column };
+}
+
+export function toShipDto(ship: ShipView): ShipDto {
+  return { cells: ship.cells.map(toCellDto), quarterTurns: ship.quarterTurns };
 }
 
 export function toShotDto(shot: ShotReport): ShotDto {
@@ -61,13 +66,10 @@ function toGameViewDto(view: GameView): GameViewDto {
     yourTurn: view.yourTurn,
     secondsLeft: view.secondsLeft,
     winner: view.winner,
-    yourShips: view.yourShips.map((ship) => ({
-      cells: ship.cells.map(toCellDto),
-      quarterTurns: ship.quarterTurns,
-    })),
+    yourShips: view.yourShips.map(toShipDto),
     shotsAtYou: view.shotsAtYou.map(toCellDto),
     yourShots: view.yourShots.map((shot) => ({ cell: toCellDto(shot.position), hit: shot.hit })),
-    sunkEnemyShips: view.sunkEnemyShips.map((cells) => cells.map(toCellDto)),
+    sunkEnemyShips: view.sunkEnemyShips.map(toShipDto),
     knownEmptyEnemyCells: view.knownEmptyEnemyCells.map(toCellDto),
     knownEmptyOwnCells: view.knownEmptyOwnCells.map(toCellDto),
   };
