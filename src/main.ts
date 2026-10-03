@@ -2,8 +2,8 @@ import { GameClient } from "./infrastructure/GameClient";
 import { LocalStoragePreferences } from "./infrastructure/LocalStoragePreferences";
 import { LocalStorageSessionStore } from "./infrastructure/LocalStorageSessionStore";
 import { webSocketFactory } from "./infrastructure/webSocketFactory";
-import { createApp } from "./ui/app";
-import "./ui/styles.css";
+import { createApp } from "./ui/app/app";
+import "./ui/app/styles.css";
 
 const TICK_MILLISECONDS = 250;
 
