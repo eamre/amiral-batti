@@ -8,11 +8,16 @@ const toCoordinates = (positions: readonly Position[]) =>
   positions.map((p) => `${p.row},${p.column}`).sort();
 
 describe("Ship", () => {
-  const horizontalShip = () => new Ship(ShipShape.straight(3), new Position(2, 4));
+  const horizontalShip = () =>
+    new Ship(ShipShape.straight(3), new Position(2, 4));
 
   describe("cells", () => {
     it("shifts the shape's cells to the origin", () => {
-      expect(toCoordinates(horizontalShip().cells)).toEqual(["2,4", "2,5", "2,6"]);
+      expect(toCoordinates(horizontalShip().cells)).toEqual([
+        "2,4",
+        "2,5",
+        "2,6",
+      ]);
     });
 
     it("a ship turned a quarter turn stands vertical and keeps its top-left corner", () => {
@@ -22,7 +27,12 @@ describe("Ship", () => {
     });
 
     it("a rotated T ship places the cells of the new shape relative to its origin", () => {
-      const t = new ShipShape([new Position(0, 0), new Position(1, 0), new Position(2, 0), new Position(1, 1)]);
+      const t = new ShipShape([
+        new Position(0, 0),
+        new Position(1, 0),
+        new Position(2, 0),
+        new Position(1, 1),
+      ]);
       const turned = new Ship(t, new Position(5, 5), 1);
 
       expect(toCoordinates(turned.cells)).toEqual(["5,5", "5,6", "5,7", "6,6"]);
@@ -40,7 +50,11 @@ describe("Ship", () => {
 
   describe("movedTo", () => {
     it("moves the ship, preserving the number of quarter turns", () => {
-      const moved = new Ship(ShipShape.straight(2), new Position(0, 0), 1).movedTo(new Position(4, 4));
+      const moved = new Ship(
+        ShipShape.straight(2),
+        new Position(0, 0),
+        1,
+      ).movedTo(new Position(4, 4));
 
       expect(moved.quarterTurns).toBe(1);
       expect(toCoordinates(moved.cells)).toEqual(["4,4", "5,4"]);
@@ -75,6 +89,52 @@ describe("Ship", () => {
 
       expect(ship.quarterTurns).toBe(2);
       expect(toCoordinates(ship.cells)).toEqual(["2,4", "2,5", "2,6"]);
+    });
+  });
+
+  describe("overlaps", () => {
+    it("is true when the ships share a cell", () => {
+      const horizontal = new Ship(ShipShape.straight(3), new Position(1, 1));
+      const vertical = new Ship(ShipShape.straight(3), new Position(0, 2), 1);
+
+      expect(horizontal.overlaps(vertical)).toBe(true);
+    });
+
+    it("is false when the ships are far apart", () => {
+      const first = new Ship(ShipShape.straight(3), new Position(1, 1));
+      const second = new Ship(ShipShape.straight(2), new Position(4, 1));
+
+      expect(first.overlaps(second)).toBe(false);
+    });
+
+    it("is false for ships that only touch", () => {
+      const first = new Ship(ShipShape.straight(3), new Position(1, 1));
+      const second = new Ship(ShipShape.straight(2), new Position(2, 1));
+
+      expect(first.overlaps(second)).toBe(false);
+    });
+  });
+
+  describe("touches", () => {
+    it("is true when a cell of one ship is next to a cell of the other", () => {
+      const first = new Ship(ShipShape.straight(3), new Position(1, 1));
+      const second = new Ship(ShipShape.straight(2), new Position(2, 1));
+
+      expect(first.touches(second)).toBe(true);
+    });
+
+    it("is true when the ships touch only diagonally", () => {
+      const first = new Ship(ShipShape.straight(3), new Position(1, 1));
+      const second = new Ship(ShipShape.straight(2), new Position(2, 4));
+
+      expect(first.touches(second)).toBe(true);
+    });
+
+    it("is false when there is a free cell between the ships", () => {
+      const first = new Ship(ShipShape.straight(3), new Position(1, 1));
+      const second = new Ship(ShipShape.straight(2), new Position(3, 1));
+
+      expect(first.touches(second)).toBe(false);
     });
   });
 });

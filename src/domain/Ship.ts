@@ -23,12 +23,24 @@ export class Ship {
 
   /** Geminin tahtada kapladığı kareler. */
   get cells(): Position[] {
-    return this.shape.cells.map((cell) => this.origin.offsetBy(cell.row, cell.column));
+    return this.shape.cells.map((cell) =>
+      this.origin.offsetBy(cell.row, cell.column),
+    );
   }
 
   /** Bu gemi o karede duruyor mu? */
   occupies(position: Position): boolean {
     return this.cells.some((cell) => cell.equals(position));
+  }
+
+  overlaps(other: Ship): boolean {
+    return this.cells.some((cell) => other.occupies(cell));
+  }
+
+  touches(other: Ship): boolean {
+    return this.cells.some((cell) =>
+      other.cells.some((otherCell) => cell.isAdjacentTo(otherCell)),
+    );
   }
 
   /** Aynı gemi, sol üst köşesi başka bir yerde. */

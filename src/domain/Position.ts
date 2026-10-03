@@ -14,4 +14,11 @@ export class Position {
   offsetBy(rowDelta: number, columnDelta: number): Position {
     return new Position(this.row + rowDelta, this.column + columnDelta);
   }
+
+  isAdjacentTo(other: Position): boolean {
+    const rowDistance = Math.abs(this.row - other.row);
+    const columnDistance = Math.abs(this.column - other.column);
+
+    return rowDistance <= 1 && columnDistance <= 1 && !this.equals(other);
+  }
 }

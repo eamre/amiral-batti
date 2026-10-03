@@ -33,4 +33,34 @@ describe("Position", () => {
     expect(moved.equals(new Position(3, 0))).toBe(true);
     expect(original.equals(new Position(1, 1))).toBe(true);
   });
+
+  describe("isAdjacentTo", () => {
+    it("is true for positions next to each other in a row or column", () => {
+      const position = new Position(2, 2);
+
+      expect(position.isAdjacentTo(new Position(2, 3))).toBe(true);
+      expect(position.isAdjacentTo(new Position(1, 2))).toBe(true);
+    });
+
+    it("is true for diagonal positions", () => {
+      const position = new Position(2, 2);
+
+      expect(position.isAdjacentTo(new Position(3, 3))).toBe(true);
+      expect(position.isAdjacentTo(new Position(1, 1))).toBe(true);
+    });
+
+    it("is false for the same position", () => {
+      const position = new Position(2, 2);
+
+      expect(position.isAdjacentTo(new Position(2, 2))).toBe(false);
+    });
+
+    it("is false for positions two or more cells apart", () => {
+      const position = new Position(2, 2);
+
+      expect(position.isAdjacentTo(new Position(2, 4))).toBe(false);
+      expect(position.isAdjacentTo(new Position(4, 2))).toBe(false);
+      expect(position.isAdjacentTo(new Position(4, 4))).toBe(false);
+    });
+  });
 });
