@@ -9,7 +9,7 @@ export class ShipShape {
 
   constructor(cells: readonly Position[]) {
     if (cells.length === 0) {
-      throw new Error("Bir geminin en az bir karesi olmalı.");
+      throw new Error("A ship needs at least one cell.");
     }
     this.cells = alignToTopLeft(cells);
   }

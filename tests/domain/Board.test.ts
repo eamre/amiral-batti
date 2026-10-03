@@ -113,6 +113,20 @@ describe("Board.pulledInside", () => {
 
     expect(board.pulledInside(ship).origin).toEqual(new Position(1, 2));
   });
+
+  it("pulls a ship down when it sticks out of the top", () => {
+    const board = new Board(5);
+    const ship = new Ship(ShipShape.straight(3), new Position(-1, 1));
+
+    expect(board.pulledInside(ship).origin).toEqual(new Position(0, 1));
+  });
+
+  it("pulls a ship right when it sticks out of the left side", () => {
+    const board = new Board(5);
+    const ship = new Ship(ShipShape.straight(3), new Position(1, -2));
+
+    expect(board.pulledInside(ship).origin).toEqual(new Position(1, 0));
+  });
 });
 
 describe("Board.surroundingsOf", () => {

@@ -54,8 +54,8 @@ export class Board {
     const maxOriginRow = this.size - ship.shape.height;
     const maxOriginColumn = this.size - ship.shape.width;
 
-    const row = Math.min(ship.origin.row, maxOriginRow);
-    const column = Math.min(ship.origin.column, maxOriginColumn);
+    const row = Math.max(0, Math.min(ship.origin.row, maxOriginRow));
+    const column = Math.max(0, Math.min(ship.origin.column, maxOriginColumn));
 
     return ship.movedTo(new Position(row, column));
   }
