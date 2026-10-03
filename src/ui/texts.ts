@@ -1,7 +1,8 @@
 import type { FleetPresetId } from "../domain/fleetPresets";
 import type { ShipKind } from "../domain/ShipDefinition";
 import type { ConnectionStatus } from "../infrastructure/GameClient";
-import type { ErrorCode } from "../shared/protocol";
+import type { Player } from "../domain/Player";
+import type { ErrorCode, ShotDto } from "../shared/protocol";
 import type { FleetSummary } from "./fleetSummary";
 import type { StatusCode } from "./screen";
 
@@ -92,6 +93,13 @@ export const battleText = {
   enemyFleet: "Düşman filosu",
   shipsLeft: (left: number, total: number): string => `${left} / ${total}`,
   sunkSuffix: "battı",
+  timer: (seconds: number): string => `⏱ ${seconds}`,
+  score: (yours: number, theirs: number, opponentName: string | undefined): string =>
+    `Sen ${yours} – ${theirs} ${opponentName ?? "Rakip"}`,
+  leave: "Odadan çık",
+  rematchAsk: "Tekrar oyna",
+  rematchWait: "Rakip bekleniyor…",
+  rematchAccept: "Rövanşı kabul et",
 };
 
 export const placementText = {
@@ -101,3 +109,20 @@ export const placementText = {
   shuffle: "Karıştır",
   ready: "Hazırım",
 };
+
+/** What the player is told about the shot that has just been fired, by him or at him. */
+export function shotText(shot: ShotDto, you: Player, opponentName: string | undefined): string {
+  const opponent = opponentName ?? "Rakip";
+  const size = shot.sunkShip?.length ?? 0;
+  const isYours = shot.shooter === you;
+
+  const base = isYours
+    ? { miss: "Iskaladın.", hit: "Vurdun!", sunk: `${size} karelik gemiyi batırdın!` }[shot.outcome]
+    : {
+        miss: `${opponent} ıskaladı.`,
+        hit: `${opponent} vurdu!`,
+        sunk: `${opponent} ${size} karelik gemini batırdı!`,
+      }[shot.outcome];
+
+  return shot.wasRandom ? `Süre doldu, rastgele atıldı: ${base}` : base;
+}

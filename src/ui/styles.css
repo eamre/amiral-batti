@@ -431,3 +431,34 @@ p {
 .hint--center {
   text-align: center;
 }
+
+/* ---------- Battle ---------- */
+.status {
+  gap: 4px;
+}
+
+.status__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gap);
+}
+
+.status__text {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.timer {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer--urgent {
+  color: var(--danger);
+}
+
+/* Reserves the line, so the board does not jump when a message appears. */
+.status .hint {
+  min-height: 1.4em;
+}
