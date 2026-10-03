@@ -34,6 +34,6 @@ function shipIcon({ kind, shape, sunk }: FleetStatusEntry): SVGSVGElement {
         style: `--w:${shape.width};--h:${shape.height}`,
       },
     },
-    shipGraphic(shape.cells, sunk),
+    shipGraphic(shape.cells, sunk ? "sunk" : "afloat"),
   );
 }

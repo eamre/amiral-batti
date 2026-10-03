@@ -10,21 +10,21 @@ const flat = [
 
 describe("shipGraphic", () => {
   it("draws the hull twice: once for the outline, once for the body", () => {
-    const graphic = shipGraphic(flat, false);
+    const graphic = shipGraphic(flat, "afloat");
 
     expect(graphic.querySelectorAll(".ship__outline polygon")).toHaveLength(1);
     expect(graphic.querySelectorAll(".ship__body polygon")).toHaveLength(1);
   });
 
   it("draws the cabins", () => {
-    expect(shipGraphic(flat, false).querySelectorAll(".ship__cabin")).toHaveLength(1);
+    expect(shipGraphic(flat, "afloat").querySelectorAll(".ship__cabin")).toHaveLength(1);
   });
 
   it("is a plain ship while it floats", () => {
-    expect(shipGraphic(flat, false).classList.contains("ship--sunk")).toBe(false);
+    expect(shipGraphic(flat, "afloat").classList.contains("ship--sunk")).toBe(false);
   });
 
-  it("is marked when it has sunk", () => {
-    expect(shipGraphic(flat, true).classList.contains("ship--sunk")).toBe(true);
+  it.each(["sunk", "misplaced", "lifted"] as const)("is marked when it is %s", (look) => {
+    expect(shipGraphic(flat, look).classList.contains(`ship--${look}`)).toBe(true);
   });
 });

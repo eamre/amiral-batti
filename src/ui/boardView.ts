@@ -27,12 +27,16 @@ export function renderBoard(model: BoardModel, options: BoardOptions): SVGSVGEle
       class: "board",
       attrs: { viewBox: `0 0 ${model.size} ${model.size}`, role: "group", "aria-label": options.label },
     },
-    svg("rect", { class: "board__sea", attrs: { width: model.size, height: model.size } }),
-    grid(model.size),
-    ...model.ships.map((ship) => shipGraphic(ship.cells, ship.sunk)),
+    ...seaAndGrid(model.size),
+    ...model.ships.map((ship) => shipGraphic(ship.cells, ship.sunk ? "sunk" : "afloat")),
     ...model.cells.filter((cell) => cell.mark !== "none").map(markOf),
     ...model.cells.filter((cell) => cell.canFire).map((cell) => target(cell, options.onFire)),
   );
+}
+
+/** The bottom two layers, which every board has. */
+export function seaAndGrid(size: number): SVGElement[] {
+  return [svg("rect", { class: "board__sea", attrs: { width: size, height: size } }), grid(size)];
 }
 
 function grid(size: number): SVGPathElement {

@@ -394,3 +394,40 @@ p {
 .fleet__ship--sunk {
   opacity: 0.5;
 }
+
+/* ---------- Arranging the fleet ---------- */
+.board--placing {
+  /* The finger drags a ship; the page must not scroll under it. */
+  touch-action: none;
+  cursor: grab;
+}
+
+.ship--misplaced .ship__outline {
+  fill: var(--bad);
+  stroke: var(--bad);
+}
+
+.ship--misplaced .ship__body {
+  fill: color-mix(in srgb, var(--bad) 45%, var(--ship));
+}
+
+.ship--misplaced .ship__cabin {
+  fill: var(--bad);
+}
+
+.ship--lifted .ship__outline {
+  fill: var(--ok);
+  stroke: var(--ok);
+}
+
+.ship--lifted .ship__body {
+  fill: color-mix(in srgb, var(--ok) 35%, var(--ship));
+}
+
+.ship--lifted .ship__cabin {
+  fill: var(--ok);
+}
+
+.hint--center {
+  text-align: center;
+}

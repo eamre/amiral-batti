@@ -93,3 +93,11 @@ export const battleText = {
   shipsLeft: (left: number, total: number): string => `${left} / ${total}`,
   sunkSuffix: "battı",
 };
+
+export const placementText = {
+  hint: "Gemiyi sürükleyip taşı · dokun: döndür",
+  fix: "Kırmızı gemiler yerinde duramaz. Onları taşı.",
+  board: "Filon",
+  shuffle: "Karıştır",
+  ready: "Hazırım",
+};
