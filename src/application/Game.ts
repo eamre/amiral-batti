@@ -80,6 +80,11 @@ export class Game {
     return this.state.battle?.winner;
   }
 
+  /** The player's fleet: the one he declared ready, or the one fighting in the battle. */
+  fleetOf(player: Player): Fleet | undefined {
+    return this.state.battle?.fleetOf(player) ?? this.state.readyFleets[player];
+  }
+
   isReady(player: Player): boolean {
     return this.phase !== "placing" || this.state.readyFleets[player] !== undefined;
   }

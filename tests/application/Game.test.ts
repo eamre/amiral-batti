@@ -238,6 +238,25 @@ describe("Game", () => {
     });
   });
 
+  describe("fleetOf", () => {
+    it("is undefined for a player who is not ready yet", () => {
+      expect(Game.create().fleetOf("first")).toBeUndefined();
+    });
+
+    it("gives the fleet of a player who is ready while others are still placing", () => {
+      const game = Game.create().markReady("first", classicPlacements(), NOW);
+
+      expect(game.fleetOf("first")?.ships).toHaveLength(5);
+      expect(game.fleetOf("second")).toBeUndefined();
+    });
+
+    it("gives the fleets that are fighting once the battle has started", () => {
+      const game = gameInBattle().fire("first", MISS, NOW).game;
+
+      expect(game.fleetOf("second")?.shotsReceived).toEqual([MISS]);
+    });
+  });
+
   describe("nextRound", () => {
     it("goes back to placing ships and keeps the score", () => {
       const game = finishedGame().nextRound();
