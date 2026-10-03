@@ -1,7 +1,9 @@
 import type { ShipDefinition } from "./ShipDefinition";
 import { ShipShape } from "./ShipShape";
 
-export type FleetPresetId = "classic" | "russian" | "standard";
+export const FLEET_PRESET_IDS = ["classic", "russian", "standard"] as const;
+
+export type FleetPresetId = (typeof FLEET_PRESET_IDS)[number];
 
 export const FLEET_PRESETS: Record<FleetPresetId, readonly ShipDefinition[]> = {
   classic: [

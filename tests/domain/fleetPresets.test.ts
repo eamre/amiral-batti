@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ShipDefinition } from "../../src/domain/ShipDefinition";
-import { FLEET_PRESETS } from "../../src/domain/fleetPresets";
+import { FLEET_PRESET_IDS, FLEET_PRESETS } from "../../src/domain/fleetPresets";
 
 function countCells(fleet: readonly ShipDefinition[]): number {
   return fleet.reduce(
@@ -23,5 +23,9 @@ describe("FLEET_PRESETS", () => {
   it("standard fleet has 6 ships covering 24 cells", () => {
     expect(FLEET_PRESETS.standard).toHaveLength(6);
     expect(countCells(FLEET_PRESETS.standard)).toBe(24);
+  });
+
+  it("has a definition for every preset id and no other", () => {
+    expect([...FLEET_PRESET_IDS].sort()).toEqual(Object.keys(FLEET_PRESETS).sort());
   });
 });
