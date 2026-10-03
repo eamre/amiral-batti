@@ -120,9 +120,9 @@ describe("viewFor", () => {
 
       const view = viewFor(game, "first", NOW);
 
-      expect(view.knownEmptyCells).toHaveLength(10);
-      expect(view.knownEmptyCells).toContainEqual(new Position(7, 4));
-      expect(view.knownEmptyCells).toContainEqual(new Position(9, 7));
+      expect(view.knownEmptyEnemyCells).toHaveLength(10);
+      expect(view.knownEmptyEnemyCells).toContainEqual(new Position(7, 4));
+      expect(view.knownEmptyEnemyCells).toContainEqual(new Position(9, 7));
     });
 
     it("leaves out known empty cells that were already fired at", () => {
@@ -136,17 +136,51 @@ describe("viewFor", () => {
 
       const view = viewFor(game, "first", NOW);
 
-      expect(view.knownEmptyCells).toHaveLength(9);
-      expect(view.knownEmptyCells).not.toContainEqual(new Position(7, 4));
+      expect(view.knownEmptyEnemyCells).toHaveLength(9);
+      expect(view.knownEmptyEnemyCells).not.toContainEqual(new Position(7, 4));
+    });
+
+    it("lists the cells around the viewer's own sunk ships as known to be empty", () => {
+      const firstsBoat = cellsOfShipAt(4, 0);
+      const game = fireAll(
+        gameInBattle().fire("first", new Position(9, 9), NOW).game,
+        "second",
+        firstsBoat,
+      );
+
+      const view = viewFor(game, "first", NOW);
+
+      // The boat is at the left edge, so there is no column to its left: 3 x 3 - 2 = 7 cells.
+      expect(view.knownEmptyOwnCells).toHaveLength(7);
+      expect(view.knownEmptyOwnCells).toContainEqual(new Position(7, 0));
+      expect(view.knownEmptyOwnCells).toContainEqual(new Position(9, 2));
+      expect(viewFor(game, "second", NOW).knownEmptyOwnCells).toEqual([]);
+    });
+
+    it("leaves out cells around the viewer's own sunk ships that were already fired at", () => {
+      const firstsBoat = cellsOfShipAt(4, 0);
+      const game = fireAll(
+        gameInBattle()
+          .fire("first", new Position(9, 9), NOW).game
+          .fire("second", new Position(7, 0), NOW).game
+          .fire("first", new Position(9, 8), NOW).game,
+        "second",
+        firstsBoat,
+      );
+
+      const view = viewFor(game, "first", NOW);
+
+      expect(view.knownEmptyOwnCells).toHaveLength(6);
+      expect(view.knownEmptyOwnCells).not.toContainEqual(new Position(7, 0));
     });
 
     it("lists a known empty cell only once even when two sunk ships share it", () => {
       const game = fireAll(gameInBattle(), "first", [...secondsDestroyer, ...secondsBoat]);
 
       const view = viewFor(game, "first", NOW);
-      const keys = view.knownEmptyCells.map((cell) => `${cell.row},${cell.column}`);
+      const keys = view.knownEmptyEnemyCells.map((cell) => `${cell.row},${cell.column}`);
 
-      expect(view.knownEmptyCells).toHaveLength(18);
+      expect(view.knownEmptyEnemyCells).toHaveLength(18);
       expect(new Set(keys).size).toBe(18);
     });
   });

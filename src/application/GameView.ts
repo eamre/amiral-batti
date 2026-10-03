@@ -29,7 +29,9 @@ export interface GameView {
   readonly yourShots: readonly ShotView[];
   readonly sunkEnemyShips: readonly (readonly Position[])[];
   /** Cells around sunk enemy ships that cannot hold a ship and were not fired at. */
-  readonly knownEmptyCells: readonly Position[];
+  readonly knownEmptyEnemyCells: readonly Position[];
+  /** The same around the viewer's own sunk ships: the opponent knows they are empty too. */
+  readonly knownEmptyOwnCells: readonly Position[];
 }
 
 export function viewFor(game: Game, you: Player, now: number): GameView {
@@ -51,7 +53,8 @@ export function viewFor(game: Game, you: Player, now: number): GameView {
     shotsAtYou: yourFleet?.shotsReceived ?? [],
     yourShots: shotsAt(enemyFleet),
     sunkEnemyShips: enemyFleet?.sunkShips.map((ship) => ship.cells) ?? [],
-    knownEmptyCells: emptyCellsNotFiredAt(game, opponent),
+    knownEmptyEnemyCells: emptyCellsNotFiredAt(game, opponent),
+    knownEmptyOwnCells: emptyCellsNotFiredAt(game, you),
   };
 }
 
@@ -66,15 +69,16 @@ function shotsAt(fleet: Fleet | undefined): ShotView[] {
   }));
 }
 
-function emptyCellsNotFiredAt(game: Game, opponent: Player): Position[] {
+/** The cells around the sunk ships of `owner` that nobody needs to fire at, each listed once. */
+function emptyCellsNotFiredAt(game: Game, owner: Player): Position[] {
   const { battle } = game;
 
   if (battle === undefined) {
     return [];
   }
 
-  const fleet = battle.fleetOf(opponent);
-  const cells = battle.knownEmptyCellsOf(opponent);
+  const fleet = battle.fleetOf(owner);
+  const cells = battle.knownEmptyCellsOf(owner);
 
   return cells.filter(
     (cell, index) =>

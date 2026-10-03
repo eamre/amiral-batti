@@ -60,7 +60,8 @@ export interface GameViewDto {
   readonly shotsAtYou: readonly CellDto[];
   readonly yourShots: readonly ShotViewDto[];
   readonly sunkEnemyShips: readonly (readonly CellDto[])[];
-  readonly knownEmptyCells: readonly CellDto[];
+  readonly knownEmptyEnemyCells: readonly CellDto[];
+  readonly knownEmptyOwnCells: readonly CellDto[];
 }
 
 export interface RoomViewDto {

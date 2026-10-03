@@ -65,6 +65,7 @@ function toGameViewDto(view: GameView): GameViewDto {
     shotsAtYou: view.shotsAtYou.map(toCellDto),
     yourShots: view.yourShots.map((shot) => ({ cell: toCellDto(shot.position), hit: shot.hit })),
     sunkEnemyShips: view.sunkEnemyShips.map((cells) => cells.map(toCellDto)),
-    knownEmptyCells: view.knownEmptyCells.map(toCellDto),
+    knownEmptyEnemyCells: view.knownEmptyEnemyCells.map(toCellDto),
+    knownEmptyOwnCells: view.knownEmptyOwnCells.map(toCellDto),
   };
 }
