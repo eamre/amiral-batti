@@ -75,12 +75,45 @@ describe("LocalStoragePreferences: the layout", () => {
   });
 });
 
+describe("LocalStoragePreferences: the sound", () => {
+  it("has the sound on before the player says otherwise", () => {
+    expect(new LocalStoragePreferences(new MemoryStorage()).loadMuted()).toBe(false);
+  });
+
+  it("gives back the choice that was saved", () => {
+    const preferences = new LocalStoragePreferences(new MemoryStorage());
+
+    preferences.saveMuted(true);
+    expect(preferences.loadMuted()).toBe(true);
+
+    preferences.saveMuted(false);
+    expect(preferences.loadMuted()).toBe(false);
+  });
+
+  it("keeps the choice apart from the name", () => {
+    const preferences = new LocalStoragePreferences(new MemoryStorage());
+
+    preferences.saveMuted(true);
+
+    expect(preferences.loadName()).toBe("");
+  });
+
+  it("leaves the sound on when what was saved makes no sense", () => {
+    const storage = new MemoryStorage();
+    storage.setItem("amiral-muted", "maybe");
+
+    expect(new LocalStoragePreferences(storage).loadMuted()).toBe(false);
+  });
+});
+
 describe("LocalStoragePreferences: a storage that does not work", () => {
   it("still lets the game go on", () => {
     const preferences = new LocalStoragePreferences(new BrokenStorage());
 
     expect(() => preferences.saveName("Emre")).not.toThrow();
     expect(() => preferences.saveLayout("classic", layout)).not.toThrow();
+    expect(() => preferences.saveMuted(true)).not.toThrow();
+    expect(preferences.loadMuted()).toBe(false);
     expect(preferences.loadName()).toBe("");
     expect(preferences.loadLayout("classic")).toBeUndefined();
   });

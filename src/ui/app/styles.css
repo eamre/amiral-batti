@@ -192,8 +192,18 @@ p {
   display: none;
 }
 
+/* A toggle that is on is as strong as the text; one that is off is dimmed. */
+.icon-button[aria-pressed="true"] {
+  color: var(--ink);
+}
+
 @media (hover: hover) {
   .icon-button:hover {
+    color: var(--ink);
+  }
+
+  /* Only the way out warns. */
+  .leave .icon-button:hover {
     color: var(--danger);
   }
 }
@@ -395,6 +405,16 @@ p {
 
 .board__sea {
   fill: var(--sea);
+}
+
+.board__label {
+  fill: var(--muted);
+  /* In cell units, like everything drawn on the board. */
+  font-size: 0.42px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
 }
 
 .board__grid {

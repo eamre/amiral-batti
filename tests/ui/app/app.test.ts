@@ -50,10 +50,20 @@ function newApp(remembered: { name?: string; layout?: ShipPlacementDto[] } = {})
     loadLayout: vi.fn(() => remembered.layout),
     saveLayout: vi.fn(),
   } satisfies Preferences;
+  const sound = {
+    muted: false,
+    isMuted() {
+      return this.muted;
+    },
+    setMuted: vi.fn(function (this: { muted: boolean }, muted: boolean) {
+      this.muted = muted;
+    }),
+  };
   const copy = vi.fn();
   const app = createApp({
     commands,
     preferences,
+    sound,
     copy,
     random: stream(3),
     now: () => now,
@@ -67,6 +77,7 @@ function newApp(remembered: { name?: string; layout?: ShipPlacementDto[] } = {})
     app,
     commands,
     preferences,
+    sound,
     copy,
     find,
     role,
@@ -84,6 +95,47 @@ function newApp(remembered: { name?: string; layout?: ShipPlacementDto[] } = {})
     },
   };
 }
+
+describe("createApp: the sound", () => {
+  it("has a button in the header from the start, in the lobby too", () => {
+    const { app, role } = newApp();
+
+    expect(role("sound-toggle")?.closest(".header")).not.toBeNull();
+    expect(app.element.querySelectorAll("[data-role=sound-toggle]")).toHaveLength(1);
+    expect(role("sound-toggle")?.hidden).toBe(false);
+  });
+
+  it("keeps the button on every screen", () => {
+    const { show, role } = newApp();
+
+    for (const room of [roomView({ game: gameView({ phase: "placing" }) }), roomView()]) {
+      show(state(room));
+
+      expect(role("sound-toggle")?.hidden).toBe(false);
+    }
+  });
+
+  it("turns the sound off and on with the button", () => {
+    const { role, sound } = newApp();
+
+    role("sound-toggle")?.click();
+    expect(sound.setMuted).toHaveBeenLastCalledWith(true);
+
+    role("sound-toggle")?.click();
+    expect(sound.setMuted).toHaveBeenLastCalledWith(false);
+  });
+
+  it("puts the button before the way out of the room, so that the way out stays in the corner", () => {
+    const { role } = newApp();
+    const side = role("connection")?.parentElement;
+
+    expect([...(side?.children ?? [])].map((child) => child.getAttribute("data-role"))).toEqual([
+      "connection",
+      "sound-toggle",
+      "leave",
+    ]);
+  });
+});
 
 describe("createApp: the way out of a room", () => {
   const screens = {

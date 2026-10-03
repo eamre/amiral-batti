@@ -139,3 +139,9 @@ export const appText = {
   leaveStay: "Vazgeç",
   leaveConfirm: "Çık",
 };
+
+export const soundText = {
+  label: "Ses efektleri",
+  turnOff: "Sesi kapat",
+  turnOn: "Sesi aç",
+};

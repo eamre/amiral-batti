@@ -13,6 +13,8 @@ import { createLobby } from "../lobby/lobby";
 import { createPlacement } from "../placement/placement";
 import { fromPlacementDto, toPlacementDto } from "../placement/placementDto";
 import { createRoomCard } from "../room/roomCard";
+import type { Muting } from "../sound/sound";
+import { createSoundToggle } from "../sound/soundToggle";
 import { screenKindOf, type ScreenKind } from "./screen";
 import { APP_TITLE, appText, battleText, connectionText, errorText } from "../texts/texts";
 
@@ -29,6 +31,8 @@ export interface Commands {
 export interface AppOptions {
   readonly commands: Commands;
   readonly preferences: Preferences;
+  /** The player's choice to hear the game or not. The app only shows and changes it; the sounds are played elsewhere. */
+  readonly sound: Muting;
   readonly copy: (text: string) => void;
   readonly random: RandomSource;
   readonly now: () => number;
@@ -78,7 +82,7 @@ export function createApp(options: AppOptions): App {
       "header",
       { class: "header" },
       h("h1", { class: "title" }, `⚓ ${APP_TITLE}`),
-      h("div", { class: "header__side" }, connection, leave.element),
+      h("div", { class: "header__side" }, connection, createSoundToggle(options.sound), leave.element),
     ),
     notice,
     slot,

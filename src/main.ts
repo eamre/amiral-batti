@@ -3,6 +3,9 @@ import { LocalStoragePreferences } from "./infrastructure/LocalStoragePreference
 import { LocalStorageSessionStore } from "./infrastructure/LocalStorageSessionStore";
 import { webSocketFactory } from "./infrastructure/webSocketFactory";
 import { createApp } from "./ui/app/app";
+import { SoundSwitch } from "./ui/sound/SoundSwitch";
+import { createSoundEffects } from "./ui/sound/soundEffects";
+import { TonePlayer } from "./ui/sound/TonePlayer";
 import "./ui/app/styles.css";
 
 const TICK_MILLISECONDS = 250;
@@ -16,6 +19,10 @@ const schedule = (action: () => void, delayMilliseconds: number): void => {
 // the client up at the moment they are used.
 let client: GameClient;
 
+const preferences = new LocalStoragePreferences(localStorage);
+const sound = new SoundSwitch(new TonePlayer(() => new AudioContext()), preferences);
+const effects = createSoundEffects(sound);
+
 const app = createApp({
   commands: {
     create: (name, rules) => client.create(name, rules),
@@ -25,7 +32,8 @@ const app = createApp({
     rematch: () => client.rematch(),
     leave: () => client.leave(),
   },
-  preferences: new LocalStoragePreferences(localStorage),
+  preferences,
+  sound,
   // Only pages served over https (or from localhost) may use the clipboard.
   copy: (text) => void navigator.clipboard?.writeText(text),
   random: Math.random,
@@ -39,8 +47,24 @@ client = new GameClient({
   createSocket: webSocketFactory(`${protocol}//${location.host}/ws`),
   store: new LocalStorageSessionStore(localStorage),
   schedule,
-  listener: app.listener,
+  // The screens and the sounds hear the same things.
+  listener: {
+    stateChanged(state) {
+      app.listener.stateChanged(state);
+      effects.stateChanged(state);
+    },
+    shotFired(shot) {
+      app.listener.shotFired(shot);
+      effects.shotFired(shot);
+    },
+    failed: (failure) => app.listener.failed(failure),
+  },
 });
+
+// Browsers keep a page silent until the player has touched it, so the first touch wakes the sound up.
+for (const type of ["pointerdown", "keydown"]) {
+  addEventListener(type, () => sound.unlock(), { once: true });
+}
 
 document.getElementById("app")?.append(app.element);
 setInterval(app.tick, TICK_MILLISECONDS);
