@@ -40,9 +40,14 @@ describe("Board.neighborsOf", () => {
     const neighbors = board.neighborsOf(new Position(1, 1));
 
     expect(toCoordinates(neighbors)).toEqual([
-      "0,0", "0,1", "0,2",
-      "1,0",        "1,2",
-      "2,0", "2,1", "2,2",
+      "0,0",
+      "0,1",
+      "0,2",
+      "1,0",
+      "1,2",
+      "2,0",
+      "2,1",
+      "2,2",
     ]);
   });
 
@@ -55,7 +60,13 @@ describe("Board.neighborsOf", () => {
   it("kenardaki karenin 5 komşusu vardır", () => {
     const neighbors = board.neighborsOf(new Position(0, 1));
 
-    expect(toCoordinates(neighbors)).toEqual(["0,0", "0,2", "1,0", "1,1", "1,2"]);
+    expect(toCoordinates(neighbors)).toEqual([
+      "0,0",
+      "0,2",
+      "1,0",
+      "1,1",
+      "1,2",
+    ]);
   });
 
   it("karenin kendisi komşuları arasında değildir", () => {
@@ -78,5 +89,28 @@ describe("Board.containsShip", () => {
     const ship = new Ship(ShipShape.straight(2), new Position(0, 2));
 
     expect(board.containsShip(ship)).toBe(false);
+  });
+});
+
+describe("pulledInside", () => {
+  it("keeps a ship that is already inside where it is", () => {
+    const board = new Board(5);
+    const ship = new Ship(ShipShape.straight(3), new Position(1, 1));
+
+    expect(board.pulledInside(ship).origin).toEqual(new Position(1, 1));
+  });
+
+  it("pulls a ship up when it sticks out of the bottom", () => {
+    const board = new Board(5);
+    const ship = new Ship(ShipShape.straight(3), new Position(3, 2), 1);
+
+    expect(board.pulledInside(ship).origin).toEqual(new Position(2, 2));
+  });
+
+  it("pulls a ship left when it sticks out of the right side", () => {
+    const board = new Board(5);
+    const ship = new Ship(ShipShape.straight(3), new Position(1, 3));
+
+    expect(board.pulledInside(ship).origin).toEqual(new Position(1, 2));
   });
 });

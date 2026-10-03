@@ -28,6 +28,14 @@ export class ShipShape {
     return this.cells.length;
   }
 
+  get height(): number {
+    return Math.max(...this.cells.map((cell) => cell.row)) + 1;
+  }
+
+  get width(): number {
+    return Math.max(...this.cells.map((cell) => cell.column)) + 1;
+  }
+
   /** Şeklin saat yönünde 90 derece döndürülmüş hali. Kendisi değişmez. */
   rotatedClockwise(): ShipShape {
     return new ShipShape(

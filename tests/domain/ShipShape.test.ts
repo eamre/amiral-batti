@@ -36,10 +36,6 @@ describe("ShipShape", () => {
     expect(() => new ShipShape([])).toThrow();
   });
 
-  it("karesiz gemi olmaz", () => {
-    expect(() => new ShipShape([])).toThrow();
-  }); // ← son it burada biter
-
   describe("rotatedClockwise", () => {
     // ← yeni grup, eski describe'ın içinde
     const tShape = () =>
@@ -95,4 +91,20 @@ describe("ShipShape", () => {
       expect(toCoordinates(original.cells)).toEqual(["0,0", "0,1", "0,2"]);
     });
   });
-}); // ← ana describe burada biter
+
+  describe("height and width", () => {
+    it("is one row high and as wide as its length for a straight ship", () => {
+      const shape = ShipShape.straight(3);
+
+      expect(shape.height).toBe(1);
+      expect(shape.width).toBe(3);
+    });
+
+    it("swaps height and width after a quarter turn", () => {
+      const shape = ShipShape.straight(3).rotatedClockwise();
+
+      expect(shape.height).toBe(3);
+      expect(shape.width).toBe(1);
+    });
+  });
+});

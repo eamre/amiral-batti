@@ -20,6 +20,16 @@ export class Board {
     return ship.cells.every((cell) => this.contains(cell));
   }
 
+  pulledInside(ship: Ship): Ship {
+    const maxOriginRow = this.size - ship.shape.height;
+    const maxOriginColumn = this.size - ship.shape.width;
+
+    const row = Math.min(ship.origin.row, maxOriginRow);
+    const column = Math.min(ship.origin.column, maxOriginColumn);
+
+    return ship.movedTo(new Position(row, column));
+  }
+
   /** Bu konumun tahta içindeki komşuları (çaprazlar dahil, en fazla 8 tane). */
   neighborsOf(position: Position): Position[] {
     const neighbors: Position[] = [];
