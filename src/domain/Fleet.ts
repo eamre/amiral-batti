@@ -1,11 +1,12 @@
 import type { Position } from "./Position";
 import type { Ship } from "./Ship";
 
-export type ShotOutcome = "miss" | "hit";
+export type ShotOutcome = "miss" | "hit" | "sunk";
 
 export interface ShotResult {
   readonly fleet: Fleet;
   readonly outcome: ShotOutcome;
+  readonly sunkShip?: Ship;
 }
 
 export class Fleet {
@@ -14,14 +15,31 @@ export class Fleet {
     readonly shotsReceived: readonly Position[] = [],
   ) {}
 
+  get isDestroyed(): boolean {
+    return this.ships.every((ship) => this.isSunk(ship));
+  }
+
   receiveShot(position: Position): ShotResult {
-    const alreadyShot = this.shotsReceived.some((shot) => shot.equals(position));
-    const fleet = alreadyShot
+    const fleet = this.hasReceivedShotAt(position)
       ? this
       : new Fleet(this.ships, [...this.shotsReceived, position]);
 
-    const outcome = this.ships.some((ship) => ship.occupies(position)) ? "hit" : "miss";
+    const hitShip = this.ships.find((ship) => ship.occupies(position));
 
-    return { fleet, outcome };
+    if (hitShip === undefined) {
+      return { fleet, outcome: "miss" };
+    }
+    if (fleet.isSunk(hitShip)) {
+      return { fleet, outcome: "sunk", sunkShip: hitShip };
+    }
+    return { fleet, outcome: "hit" };
+  }
+
+  private isSunk(ship: Ship): boolean {
+    return ship.cells.every((cell) => this.hasReceivedShotAt(cell));
+  }
+
+  hasReceivedShotAt(position: Position): boolean {
+    return this.shotsReceived.some((shot) => shot.equals(position));
   }
 }
