@@ -126,6 +126,7 @@ p {
   width: 100%;
   aspect-ratio: 1;
   min-height: 160px;
+  translate: -6px 0;
 }
 
 /* The biggest square that fits the slot, whichever of its width and height is smaller. */
