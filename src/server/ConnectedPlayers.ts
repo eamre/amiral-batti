@@ -6,8 +6,11 @@ export interface Connection {
   close(): void;
 }
 
-/** Where a browser sits: which room, and with which token it proves it owns the seat. */
-export interface Seat {
+/**
+ * Where a browser sits: which room, and the token that proves the seat is his.
+ * Not to be mixed up with the `Seat` of a room, which holds the player's name and token.
+ */
+export interface SeatAddress {
   readonly code: string;
   readonly token: string;
 }
@@ -17,21 +20,21 @@ export interface Seat {
  * it only answers "who is in this room?" and carries messages to them.
  */
 export class ConnectedPlayers {
-  private readonly seats = new Map<Connection, Seat>();
+  private readonly seats = new Map<Connection, SeatAddress>();
 
-  seat(connection: Connection, seat: Seat): void {
+  seat(connection: Connection, seat: SeatAddress): void {
     this.seats.set(connection, seat);
   }
 
   /** The seat the browser had, if it had one. The seat itself stays in the room: the player can come back. */
-  release(connection: Connection): Seat | undefined {
+  release(connection: Connection): SeatAddress | undefined {
     const seat = this.seats.get(connection);
 
     this.seats.delete(connection);
     return seat;
   }
 
-  seatOf(connection: Connection): Seat | undefined {
+  seatOf(connection: Connection): SeatAddress | undefined {
     return this.seats.get(connection);
   }
 
@@ -50,7 +53,7 @@ export class ConnectedPlayers {
   }
 
   /** Tells everybody in the room something that depends on where he sits. */
-  sendToEach(code: string, messageFor: (seat: Seat) => ServerMessage, except?: Connection): void {
+  sendToEach(code: string, messageFor: (seat: SeatAddress) => ServerMessage, except?: Connection): void {
     for (const [connection, seat] of this.connectionsIn(code)) {
       if (connection !== except) {
         connection.send(messageFor(seat));
@@ -68,7 +71,7 @@ export class ConnectedPlayers {
     }
   }
 
-  private connectionsIn(code: string): [Connection, Seat][] {
+  private connectionsIn(code: string): [Connection, SeatAddress][] {
     return [...this.seats].filter(([, seat]) => seat.code === code);
   }
 }
