@@ -16,7 +16,8 @@ import { createRoomCard } from "../room/roomCard";
 import type { Muting } from "../sound/sound";
 import { createSoundToggle } from "../sound/soundToggle";
 import { screenKindOf, type ScreenKind } from "./screen";
-import { APP_TITLE, appText, battleText, connectionText, errorText } from "../texts/texts";
+import { battleText } from "../battle/battleText";
+import { APP_TITLE, appText, connectionText, errorText } from "./appText";
 
 /** What the screens can ask the server to do. `GameClient` has all of these. */
 export interface Commands {

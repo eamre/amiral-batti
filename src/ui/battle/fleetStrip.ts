@@ -3,7 +3,7 @@ import { svg } from "../dom/svg";
 import type { FleetStatusEntry } from "./fleetStatus";
 import { shipsLeft } from "./fleetStatus";
 import { shipGraphic } from "../board/shipGraphic";
-import { battleText, shipName } from "../texts/texts";
+import { battleText, shipName } from "./battleText";
 
 /** The small box under the board: which ships of the enemy fleet are still afloat. */
 export function createFleetStrip(status: readonly FleetStatusEntry[]): HTMLElement {

@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from "vitest";
 import { createSoundToggle } from "../../../src/ui/sound/soundToggle";
-import { soundText } from "../../../src/ui/texts/texts";
+import { soundText } from "../../../src/ui/sound/soundText";
 
 function newToggle(muted = false) {
   const sound = {

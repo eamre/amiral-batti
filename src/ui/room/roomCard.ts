@@ -1,7 +1,8 @@
 import type { RoomViewDto } from "../../shared/protocol";
 import { h } from "../dom/h";
 import { statusOf } from "../app/screen";
-import { roomText, statusText } from "../texts/texts";
+import { statusText } from "../texts/statusText";
+import { roomText } from "./roomText";
 
 export interface RoomCardView {
   readonly element: HTMLElement;

@@ -2,7 +2,7 @@ import type { GameViewDto } from "../../shared/protocol";
 import { enemyFleetModel, ownWatersModel, type BoardModel } from "../board/boardModel";
 import { renderBoard } from "../board/boardView";
 import { h } from "../dom/h";
-import { battleText } from "../texts/texts";
+import { battleText } from "./battleText";
 
 export interface FleetsDialog {
   /** A button and the dialog it opens. It is hidden unless there is a fleet to show. */

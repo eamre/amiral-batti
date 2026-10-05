@@ -7,7 +7,7 @@ import { Ship } from "../../../src/domain/Ship";
 import { ShipShape } from "../../../src/domain/ShipShape";
 import { LABEL_MARGIN, viewBoxOf } from "../../../src/ui/board/boardLabels";
 import { createPlacement } from "../../../src/ui/placement/placement";
-import { placementText } from "../../../src/ui/texts/texts";
+import { placementText } from "../../../src/ui/placement/placementText";
 
 const ship = (length: number, row: number, column: number) =>
   new Ship(ShipShape.straight(length), new Position(row, column));

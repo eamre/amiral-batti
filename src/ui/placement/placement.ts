@@ -6,7 +6,7 @@ import { h } from "../dom/h";
 import { createPlacementBoard } from "./placementBoard";
 import { placementModel } from "./placementModel";
 import { pointToBoard } from "./pointToBoard";
-import { placementText } from "../texts/texts";
+import { placementText } from "./placementText";
 
 /** How far a finger must travel, in pixels, before touching a ship becomes dragging it. */
 const DRAG_THRESHOLD_PIXELS = 8;

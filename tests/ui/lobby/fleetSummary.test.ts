@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fleetSummary } from "../../../src/ui/texts/fleetSummary";
+import { fleetSummary } from "../../../src/ui/lobby/fleetSummary";
 
 describe("fleetSummary", () => {
   it.each([

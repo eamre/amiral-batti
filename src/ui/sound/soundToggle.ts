@@ -1,6 +1,6 @@
 import { h } from "../dom/h";
 import { svg } from "../dom/svg";
-import { soundText } from "../texts/texts";
+import { soundText } from "./soundText";
 import type { Muting } from "./sound";
 
 /**

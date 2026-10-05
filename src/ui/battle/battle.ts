@@ -10,7 +10,8 @@ import { enemyFleetStatus } from "./fleetStatus";
 import { createFleetsDialog } from "./fleetsDialog";
 import { createFleetStrip } from "./fleetStrip";
 import { canFireNow, shownBoard, statusOf } from "../app/screen";
-import { battleText, shotText, statusText } from "../texts/texts";
+import { statusText } from "../texts/statusText";
+import { battleText, shotText } from "./battleText";
 
 /** How long the board stays as it was after the turn has passed, so the player sees where his shot went. */
 const BOARD_SWITCH_MILLISECONDS = 900;

@@ -1,8 +1,8 @@
 import { FLEET_PRESET_IDS, type FleetPresetId } from "../../domain/fleetPresets";
 import type { RoomRulesDto } from "../../shared/protocol";
 import { h } from "../dom/h";
-import { fleetSummary } from "../texts/fleetSummary";
-import { lobbyText, presetName } from "../texts/texts";
+import { fleetSummary } from "./fleetSummary";
+import { lobbyText, presetName } from "./lobbyText";
 
 const CODE_LENGTH = 4;
 const NAME_LENGTH = 16;

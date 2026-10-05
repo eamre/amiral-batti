@@ -1,6 +1,6 @@
 import { h } from "../dom/h";
 import { svg } from "../dom/svg";
-import { appText } from "../texts/texts";
+import { leaveText } from "./roomText";
 
 export interface LeaveControl {
   readonly element: HTMLElement;
@@ -18,7 +18,7 @@ export function createLeaveControl(onLeave: () => void): LeaveControl {
   const stay = h(
     "button",
     { class: "button", attrs: { type: "button", "data-role": "leave-stay" }, on: { click: () => dialog.close() } },
-    appText.leaveStay,
+    leaveText.stay,
   );
   const confirm = h(
     "button",
@@ -32,19 +32,19 @@ export function createLeaveControl(onLeave: () => void): LeaveControl {
         },
       },
     },
-    appText.leaveConfirm,
+    leaveText.confirm,
   );
   const dialog = h(
     "dialog",
     { class: "dialog", attrs: { "data-role": "leave-dialog", "aria-labelledby": QUESTION_ID } },
-    h("h2", { class: "dialog__title", attrs: { id: QUESTION_ID } }, appText.leaveQuestion),
+    h("h2", { class: "dialog__title", attrs: { id: QUESTION_ID } }, leaveText.question),
     h("div", { class: "row" }, stay, confirm),
   );
   const open = h(
     "button",
     {
       class: "icon-button",
-      attrs: { type: "button", "data-role": "leave-open", "aria-label": appText.leave, title: appText.leave },
+      attrs: { type: "button", "data-role": "leave-open", "aria-label": leaveText.label, title: leaveText.label },
       on: { click: () => dialog.showModal() },
     },
     exitIcon(),
