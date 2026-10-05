@@ -17,7 +17,10 @@ import type { Muting } from "../sound/sound";
 import { createSoundToggle } from "../sound/soundToggle";
 import { screenKindOf, type ScreenKind } from "./screen";
 import { battleText } from "../battle/battleText";
-import { APP_TITLE, appText, connectionText, errorText } from "./appText";
+import { createNotice } from "../notice/notice";
+import { connectionText } from "../notice/noticeText";
+
+const APP_TITLE = "Amiral Battı";
 
 /** What the screens can ask the server to do. `GameClient` has all of these. */
 export interface Commands {
@@ -48,9 +51,6 @@ export interface App {
   tick(): void;
 }
 
-/** How long a complaint stays on the screen. */
-const COMPLAINT_MILLISECONDS = 4_000;
-
 interface ScreenView {
   readonly element: HTMLElement;
   update(state: ClientState, receivedAt: number): void;
@@ -69,12 +69,10 @@ export function createApp(options: AppOptions): App {
   let state: ClientState = { status: "connecting", opponentOnline: false };
   let receivedAt = options.now();
   let current: { readonly kind: ScreenKind; readonly view: ScreenView } | undefined;
-  let complaint = "";
-  let latestComplaint = 0;
 
   const connection = h("span", { class: "connection", attrs: { "data-role": "connection" } });
   const leave = createLeaveControl(() => commands.leave());
-  const notice = h("p", { class: "notice", attrs: { role: "status", "data-role": "notice" } });
+  const notice = createNotice(options.schedule);
   const slot = h("div", { class: "screen" });
   const element = h(
     "div",
@@ -85,7 +83,7 @@ export function createApp(options: AppOptions): App {
       h("h1", { class: "title" }, `⚓ ${APP_TITLE}`),
       h("div", { class: "header__side" }, connection, createSoundToggle(options.sound), leave.element),
     ),
-    notice,
+    notice.element,
     slot,
   );
 
@@ -101,7 +99,7 @@ export function createApp(options: AppOptions): App {
     const view = current?.kind === kind ? current.view : switchTo(kind, state.room);
 
     view.update(state, receivedAt);
-    showNotice();
+    notice.showState(state);
   }
 
   function switchTo(kind: ScreenKind, room: RoomViewDto | undefined): ScreenView {
@@ -110,10 +108,6 @@ export function createApp(options: AppOptions): App {
     slot.replaceChildren(view.element);
     current = { kind, view };
     return view;
-  }
-
-  function showNotice(): void {
-    notice.textContent = complaint !== "" ? complaint : presenceNotice(state);
   }
 
   function buildScreen(kind: ScreenKind, room: RoomViewDto | undefined): ScreenView {
@@ -227,17 +221,7 @@ export function createApp(options: AppOptions): App {
         current?.view.showShot(shot);
       },
       failed(failure) {
-        const mine = ++latestComplaint;
-
-        complaint = errorText[failure.code];
-        showNotice();
-        options.schedule(() => {
-          // Only the latest complaint may take the notice away.
-          if (mine === latestComplaint) {
-            complaint = "";
-            showNotice();
-          }
-        }, COMPLAINT_MILLISECONDS);
+        notice.complain(failure.code);
       },
     },
   };
@@ -254,13 +238,6 @@ function screenView(
     showShot: extras.showShot ?? (() => undefined),
     tick: extras.tick ?? (() => undefined),
   };
-}
-
-/** The opponent's connection matters only while ours works, and only once he has come. */
-function presenceNotice(state: ClientState): string {
-  const opponentHasLeft = state.room?.opponentName !== undefined && !state.opponentOnline;
-
-  return state.status === "online" && opponentHasLeft ? appText.opponentOffline : "";
 }
 
 /** The screens that are built for a room are only ever asked for when there is one. */

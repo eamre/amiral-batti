@@ -1,10 +1,9 @@
 import type { ConnectionStatus } from "../../infrastructure/GameClient";
 import type { ErrorCode } from "../../shared/protocol";
 
-// The words of the app around the screens. Every word the player reads is in a texts file; the rest of the code deals in codes.
+// The words of what the app tells the player on its own: how the connection is, what went wrong.
+// Every word the player reads is in a texts file; the rest of the code deals in codes.
 // The `Record` types make the compiler ask for a text whenever a new code is added.
-
-export const APP_TITLE = "Amiral Battı";
 
 export const connectionText: Record<ConnectionStatus, string> = {
   connecting: "bağlanıyor…",
@@ -26,6 +25,6 @@ export const errorText: Record<ErrorCode, string> = {
   "bad-message": "Geçersiz istek.",
 };
 
-export const appText = {
+export const presenceText = {
   opponentOffline: "Rakibin bağlantısı koptu. Dönmesi bekleniyor…",
 };

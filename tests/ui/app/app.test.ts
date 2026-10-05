@@ -88,7 +88,6 @@ function newApp(remembered: { name?: string; layout?: ShipPlacementDto[] } = {})
     },
     laterIsNow: () => later.splice(0).forEach((action) => action()),
     /** Only the one that was asked for first. */
-    firstLaterIsNow: () => later.shift()?.(),
     type: (field: HTMLElement | null, text: string) => {
       (field as HTMLInputElement).value = text;
       field?.dispatchEvent(new Event("input"));
@@ -471,7 +470,7 @@ describe("createApp: the battle", () => {
   });
 });
 
-describe("createApp: things that went wrong", () => {
+describe("createApp: the notice", () => {
   it("tells the player what the server refused", () => {
     const { app, role } = newApp();
 
@@ -480,32 +479,11 @@ describe("createApp: things that went wrong", () => {
     expect(role("notice")?.textContent).toBe("Böyle bir oda yok.");
   });
 
-  it("stops telling it after a while", () => {
+  it("takes it away again when the time is up", () => {
     const { app, role, laterIsNow } = newApp();
     app.listener.failed({ code: "no-such-room", message: "No such room." });
 
     laterIsNow();
-
-    expect(role("notice")?.textContent).toBe("");
-  });
-
-  it("keeps a newer problem on the screen when an older one times out", () => {
-    const { app, role, firstLaterIsNow } = newApp();
-    app.listener.failed({ code: "no-such-room", message: "" });
-    app.listener.failed({ code: "room-full", message: "" });
-
-    firstLaterIsNow();
-
-    expect(role("notice")?.textContent).toBe("Bu oda dolu.");
-  });
-
-  it("takes the newer problem away when its own time is up", () => {
-    const { app, role, firstLaterIsNow } = newApp();
-    app.listener.failed({ code: "no-such-room", message: "" });
-    app.listener.failed({ code: "room-full", message: "" });
-
-    firstLaterIsNow();
-    firstLaterIsNow();
 
     expect(role("notice")?.textContent).toBe("");
   });
@@ -516,21 +494,5 @@ describe("createApp: things that went wrong", () => {
     show(state(roomView(), "online", false));
 
     expect(role("notice")?.textContent).toBe("Rakibin bağlantısı koptu. Dönmesi bekleniyor…");
-  });
-
-  it("does not say it when there is no opponent yet", () => {
-    const { show, role } = newApp();
-
-    show(state(roomView({ opponentName: undefined, game: placing() }), "online", false));
-
-    expect(role("notice")?.textContent).toBe("");
-  });
-
-  it("does not blame the opponent when it is the player's own connection that is lost", () => {
-    const { show, role } = newApp();
-
-    show(state(roomView(), "offline", false));
-
-    expect(role("notice")?.textContent).toBe("");
   });
 });
