@@ -21,6 +21,7 @@ function lobby(initialName = "Emre") {
     presetButton: (id: string) => find<HTMLButtonElement>(`[data-preset=${id}]`),
     touchingBox: find<HTMLInputElement>("[data-role=touching]"),
     summary: find<HTMLElement>("[data-role=summary]"),
+    nameHint: find<HTMLElement>("[data-role=name-hint]"),
     createButton: find<HTMLButtonElement>("[data-role=create]"),
     codeField: find<HTMLInputElement>("[data-role=code]"),
     joinButton: find<HTMLButtonElement>("[data-role=join]"),
@@ -194,5 +195,41 @@ describe("createLobby: the name", () => {
 
     expect(createButton.disabled).toBe(false);
     expect(joinButton.disabled).toBe(false);
+  });
+
+  it("says why the buttons are closed while there is no name", () => {
+    const { nameHint } = lobby("");
+
+    expect(nameHint.hidden).toBe(false);
+    expect(nameHint.textContent).toBe("Oda kurmak ya da katılmak için önce adını yaz.");
+  });
+
+  it("says the same on the buttons themselves, for a pointer that rests on them", () => {
+    const { createButton, joinButton } = lobby("");
+
+    expect(createButton.title).toBe("Oda kurmak ya da katılmak için önce adını yaz.");
+    expect(joinButton.title).toBe("Oda kurmak ya da katılmak için önce adını yaz.");
+  });
+
+  it("says nothing once there is a name", () => {
+    const { nameHint, createButton, joinButton, nameField, type } = lobby("");
+
+    type(nameField, "Ayşe");
+
+    expect(nameHint.hidden).toBe(true);
+    expect(createButton.title).toBe("");
+    expect(joinButton.title).toBe("");
+  });
+
+  it("says nothing when the name was remembered", () => {
+    expect(lobby("Emre").nameHint.hidden).toBe(true);
+  });
+
+  it("asks for the name again when it is wiped out", () => {
+    const { nameHint, nameField, type } = lobby("Emre");
+
+    type(nameField, "  ");
+
+    expect(nameHint.hidden).toBe(false);
   });
 });

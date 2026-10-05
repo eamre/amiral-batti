@@ -38,6 +38,7 @@ export function createLobby(callbacks: LobbyCallbacks, rememberedName = ""): Lob
   nameField.value = rememberedName;
   nameField.addEventListener("input", () => refreshButtons());
 
+  const nameHint = h("p", { class: "hint", attrs: { "data-role": "name-hint" } }, lobbyText.nameHint);
   const summary = h("p", { class: "hint", attrs: { "data-role": "summary" } });
   const touchingHint = h("p", { class: "hint" });
   const touchingBox = h("input", {
@@ -119,6 +120,10 @@ export function createLobby(callbacks: LobbyCallbacks, rememberedName = ""): Lob
   function refreshButtons(): void {
     const hasName = nameField.value.trim() !== "";
 
+    // The same words twice: under the field for every screen, and on the buttons for a pointer that rests on them.
+    nameHint.hidden = hasName;
+    createButton.title = hasName ? "" : lobbyText.nameHint;
+    joinButton.title = hasName ? "" : lobbyText.nameHint;
     createButton.disabled = !online || !hasName;
     joinButton.disabled = !online || !hasName || codeField.value.length < ROOM_CODE_LENGTH;
   }
@@ -130,7 +135,7 @@ export function createLobby(callbacks: LobbyCallbacks, rememberedName = ""): Lob
   const element = h(
     "div",
     { class: "screen" },
-    h("section", { class: "card" }, nameField),
+    h("section", { class: "card" }, nameField, nameHint),
     h(
       "section",
       { class: "card" },

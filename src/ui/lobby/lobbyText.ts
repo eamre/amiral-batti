@@ -19,6 +19,7 @@ export const lobbyText = {
   joinTitle: "Odaya katıl",
   codePlaceholder: "ODA KODU",
   joinButton: "Katıl",
+  nameHint: "Oda kurmak ya da katılmak için önce adını yaz.",
   joinHint: "Katılırken kurallar odayı kurandan gelir.",
   summary: ({ ships, cells }: FleetSummary): string => `${ships} gemi, ${cells} kare`,
   touchingHint: (allowed: boolean): string =>
