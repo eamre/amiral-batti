@@ -55,13 +55,16 @@ p {
 }
 
 .title {
-  font-size: 1.6rem;
+  /* One line always; on a narrow window the letters get smaller instead of the name breaking in two. */
+  font-size: clamp(1.15rem, 6vw, 1.6rem);
   font-weight: 800;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .header__side {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 4px;
 }
