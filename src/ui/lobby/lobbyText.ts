@@ -22,6 +22,7 @@ export const lobbyText = {
   nameHint: "Oda kurmak ya da katılmak için önce adını yaz.",
   joinHint: "Katılırken kurallar odayı kurandan gelir.",
   summary: ({ ships, cells }: FleetSummary): string => `${ships} gemi, ${cells} kare`,
+  touchingLockedHint: "Rus filosunda gemiler birbirine değemez; bu kural değişmez.",
   touchingHint: (allowed: boolean): string =>
     allowed
       ? "Gemiler birbirine değebilir."

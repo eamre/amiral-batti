@@ -34,3 +34,11 @@ export const FLEET_PRESETS: Record<FleetPresetId, readonly ShipDefinition[]> = {
     { kind: "battleship", shape: ShipShape.staggeredPair() },
   ],
 };
+
+/**
+ * Whether a room may let the ships of this fleet touch. The russian fleet is ten ships on a
+ * small sea, and the game only works while they keep apart: that fleet is never allowed to touch.
+ */
+export function fleetMayTouch(preset: FleetPresetId): boolean {
+  return preset !== "russian";
+}

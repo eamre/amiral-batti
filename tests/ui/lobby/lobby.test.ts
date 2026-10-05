@@ -20,6 +20,7 @@ function lobby(initialName = "Emre") {
     nameField: find<HTMLInputElement>("[data-role=name]"),
     presetButton: (id: string) => find<HTMLButtonElement>(`[data-preset=${id}]`),
     touchingBox: find<HTMLInputElement>("[data-role=touching]"),
+    touchingHint: find<HTMLElement>("[data-role=touching-hint]"),
     summary: find<HTMLElement>("[data-role=summary]"),
     nameHint: find<HTMLElement>("[data-role=name-hint]"),
     createButton: find<HTMLButtonElement>("[data-role=create]"),
@@ -231,5 +232,56 @@ describe("createLobby: the name", () => {
     type(nameField, "  ");
 
     expect(nameHint.hidden).toBe(false);
+  });
+});
+
+describe("createLobby: touching ships and the russian fleet", () => {
+  it("unticks the box and closes it when the russian fleet is chosen", () => {
+    const { touchingBox, presetButton } = lobby();
+    touchingBox.click();
+
+    presetButton("russian").click();
+
+    expect(touchingBox.checked).toBe(false);
+    expect(touchingBox.disabled).toBe(true);
+  });
+
+  it("creates the russian room with separated ships", () => {
+    const { touchingBox, presetButton, createButton, callbacks } = lobby();
+    touchingBox.click();
+    presetButton("russian").click();
+
+    createButton.click();
+
+    expect(callbacks.create).toHaveBeenCalledWith("Emre", { fleetPreset: "russian", allowTouching: false });
+  });
+
+  it("opens the box again when another fleet is chosen", () => {
+    const { touchingBox, presetButton } = lobby();
+    presetButton("russian").click();
+
+    presetButton("classic").click();
+
+    expect(touchingBox.disabled).toBe(false);
+  });
+
+  it("tells why the box is closed", () => {
+    const { touchingHint, presetButton } = lobby();
+
+    presetButton("russian").click();
+
+    expect(touchingHint.textContent).toBe("Rus filosunda gemiler birbirine değemez; bu kural değişmez.");
+  });
+
+  it("goes back to the ordinary hint when the box is open again", () => {
+    const { touchingHint, touchingBox, presetButton } = lobby();
+    presetButton("russian").click();
+
+    presetButton("standard").click();
+    touchingBox.checked = true;
+    // A box that is not on a page does not announce its own change in this test environment.
+    touchingBox.dispatchEvent(new Event("change"));
+
+    expect(touchingHint.textContent).toBe("Gemiler birbirine değebilir.");
   });
 });

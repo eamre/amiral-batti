@@ -1,4 +1,4 @@
-import { FLEET_PRESET_IDS, type FleetPresetId } from "../../domain/fleetPresets";
+import { FLEET_PRESET_IDS, fleetMayTouch, type FleetPresetId } from "../../domain/fleetPresets";
 import { MAX_NAME_LENGTH, ROOM_CODE_LENGTH } from "../../application/roomLimits";
 import type { RoomRulesDto } from "../../shared/protocol";
 import { h } from "../dom/h";
@@ -40,7 +40,7 @@ export function createLobby(callbacks: LobbyCallbacks, rememberedName = ""): Lob
 
   const nameHint = h("p", { class: "hint", attrs: { "data-role": "name-hint" } }, lobbyText.nameHint);
   const summary = h("p", { class: "hint", attrs: { "data-role": "summary" } });
-  const touchingHint = h("p", { class: "hint" });
+  const touchingHint = h("p", { class: "hint", attrs: { "data-role": "touching-hint" } });
   const touchingBox = h("input", {
     attrs: { type: "checkbox", "data-role": "touching" },
     on: { change: () => showTouchingHint() },
@@ -111,10 +111,23 @@ export function createLobby(callbacks: LobbyCallbacks, rememberedName = ""): Lob
       button.setAttribute("aria-pressed", String(button.dataset.preset === fleetPreset));
     }
     summary.textContent = lobbyText.summary(fleetSummary(fleetPreset));
+    closeTouchingIfForbidden();
+  }
+
+  /** A fleet that must stay apart takes the choice away: the box is unticked and cannot be ticked. */
+  function closeTouchingIfForbidden(): void {
+    const forbidden = !fleetMayTouch(fleetPreset);
+    if (forbidden) {
+      touchingBox.checked = false;
+    }
+    touchingBox.disabled = forbidden;
+    showTouchingHint();
   }
 
   function showTouchingHint(): void {
-    touchingHint.textContent = lobbyText.touchingHint(touchingBox.checked);
+    touchingHint.textContent = touchingBox.disabled
+      ? lobbyText.touchingLockedHint
+      : lobbyText.touchingHint(touchingBox.checked);
   }
 
   function refreshButtons(): void {
@@ -129,7 +142,6 @@ export function createLobby(callbacks: LobbyCallbacks, rememberedName = ""): Lob
   }
 
   showChosenFleet();
-  showTouchingHint();
   refreshButtons();
 
   const element = h(

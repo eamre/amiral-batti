@@ -192,3 +192,13 @@
   height: 22px;
   accent-color: var(--accent);
 }
+
+/* A choice that cannot be made right now looks faded, like a disabled button. */
+.check:has(input:disabled) {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.check input:disabled {
+  cursor: not-allowed;
+}

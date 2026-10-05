@@ -3,6 +3,7 @@ import { GameRuleError } from "../application/GameRuleError";
 import { DEFAULT_GAME_SETTINGS, type GameSettings } from "../application/GameSettings";
 import type { Room } from "../application/Room";
 import { RoomRegistry } from "../application/RoomRegistry";
+import { fleetMayTouch } from "../domain/fleetPresets";
 import type { RandomSource } from "../domain/random";
 import type { ClientMessage, RoomRulesDto } from "../shared/protocol";
 import { ConnectedPlayers, type Connection } from "./ConnectedPlayers";
@@ -223,6 +224,6 @@ function settingsFrom(rules: RoomRulesDto): GameSettings {
   return {
     ...DEFAULT_GAME_SETTINGS,
     fleetPreset: rules.fleetPreset,
-    allowTouching: rules.allowTouching,
+    allowTouching: rules.allowTouching && fleetMayTouch(rules.fleetPreset),
   };
 }

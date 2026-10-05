@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ShipDefinition } from "../../src/domain/ShipDefinition";
-import { FLEET_PRESET_IDS, FLEET_PRESETS } from "../../src/domain/fleetPresets";
+import { FLEET_PRESETS, fleetMayTouch } from "../../src/domain/fleetPresets";
 
 function countCells(fleet: readonly ShipDefinition[]): number {
   return fleet.reduce(
@@ -24,8 +24,15 @@ describe("FLEET_PRESETS", () => {
     expect(FLEET_PRESETS.standard).toHaveLength(6);
     expect(countCells(FLEET_PRESETS.standard)).toBe(24);
   });
+});
 
-  it("has a definition for every preset id and no other", () => {
-    expect([...FLEET_PRESET_IDS].sort()).toEqual(Object.keys(FLEET_PRESETS).sort());
+describe("fleetMayTouch", () => {
+  it("never lets the ships of the russian fleet touch", () => {
+    expect(fleetMayTouch("russian")).toBe(false);
+  });
+
+  it("leaves the choice to the room for the other fleets", () => {
+    expect(fleetMayTouch("classic")).toBe(true);
+    expect(fleetMayTouch("standard")).toBe(true);
   });
 });

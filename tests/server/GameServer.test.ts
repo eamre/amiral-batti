@@ -99,12 +99,21 @@ describe("GameServer", () => {
     });
 
     it("uses the rules the creator picked", () => {
+      say(ahmet, { type: "create", name: "Ahmet", rules: { fleetPreset: "standard", allowTouching: true } });
+
+      const settings = ahmet.of("entered")[0]?.room.game.settings;
+
+      expect(settings?.fleetPreset).toBe("standard");
+      expect(settings?.allowTouching).toBe(true);
+    });
+
+    it("keeps the ships of the russian fleet apart even when the message asks otherwise", () => {
       say(ahmet, { type: "create", name: "Ahmet", rules: { fleetPreset: "russian", allowTouching: true } });
 
       const settings = ahmet.of("entered")[0]?.room.game.settings;
 
       expect(settings?.fleetPreset).toBe("russian");
-      expect(settings?.allowTouching).toBe(true);
+      expect(settings?.allowTouching).toBe(false);
     });
   });
 
