@@ -1,10 +1,9 @@
-import { BOARD_SIZE } from "./constants";
 import { Position } from "./Position";
 import { Ship } from "./Ship";
 
 /** Kare şeklindeki oyun tahtası. Hangi konumların tahtanın içinde olduğunu bilir. */
 export class Board {
-  constructor(readonly size: number = BOARD_SIZE) {}
+  constructor(readonly size: number) {}
 
   /** Bu konum tahtanın içinde mi? */
   contains(position: Position): boolean {

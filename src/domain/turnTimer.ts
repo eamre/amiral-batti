@@ -1,9 +1,7 @@
-import { TURN_SECONDS } from "./constants";
-
 export function secondsLeft(
   turnStartedAt: number,
   now: number,
-  limitSeconds: number = TURN_SECONDS,
+  limitSeconds: number,
 ): number {
   const elapsedMilliseconds = now - turnStartedAt;
   const leftMilliseconds = limitSeconds * 1000 - elapsedMilliseconds;
@@ -14,7 +12,7 @@ export function secondsLeft(
 export function hasTurnExpired(
   turnStartedAt: number,
   now: number,
-  limitSeconds: number = TURN_SECONDS,
+  limitSeconds: number,
 ): boolean {
   return secondsLeft(turnStartedAt, now, limitSeconds) === 0;
 }

@@ -1,4 +1,3 @@
-import { BOARD_SIZE, TURN_SECONDS } from "../domain/constants";
 import type { FleetPresetId } from "../domain/fleetPresets";
 
 export interface GameSettings {
@@ -9,8 +8,8 @@ export interface GameSettings {
 }
 
 export const DEFAULT_GAME_SETTINGS: GameSettings = {
-  boardSize: BOARD_SIZE,
+  boardSize: 10,
   fleetPreset: "classic",
   allowTouching: false,
-  turnSeconds: TURN_SECONDS,
+  turnSeconds: 20,
 };
