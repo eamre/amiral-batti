@@ -1,14 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import {
-  GameClient,
-  type ClientFailure,
-  type ClientListener,
-  type ClientSocket,
-  type ClientState,
-  type Session,
-  type SessionStore,
-  type SocketHandlers,
-} from "../../src/infrastructure/GameClient";
+import type { ClientSocket, Session, SessionStore, SocketHandlers } from "../../src/infrastructure/clientPorts";
+import type { ClientFailure, ClientListener, ClientState } from "../../src/infrastructure/clientState";
+import { GameClient } from "../../src/infrastructure/GameClient";
 import type { RoomViewDto, ServerMessage, ShotDto } from "../../src/shared/protocol";
 
 const RULES = { fleetPreset: "classic", allowTouching: false } as const;

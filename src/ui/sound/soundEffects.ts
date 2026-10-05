@@ -1,4 +1,4 @@
-import type { ClientListener } from "../../infrastructure/GameClient";
+import type { ClientListener } from "../../infrastructure/clientState";
 import type { GamePhase } from "../../application/Game";
 import type { SoundPlayer } from "./sound";
 

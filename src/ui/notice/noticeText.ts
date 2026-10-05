@@ -1,4 +1,4 @@
-import type { ConnectionStatus } from "../../infrastructure/GameClient";
+import type { ConnectionStatus } from "../../infrastructure/clientState";
 import type { ErrorCode } from "../../shared/protocol";
 
 // The words of what the app tells the player on its own: how the connection is, what went wrong.

@@ -1,4 +1,4 @@
-import type { SocketFactory } from "./GameClient";
+import type { SocketFactory } from "./clientPorts";
 
 /** Connects to the server with the browser's own WebSocket. */
 export function webSocketFactory(url: string): SocketFactory {

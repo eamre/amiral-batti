@@ -1,5 +1,5 @@
 import { opponentOf } from "../../domain/Player";
-import type { Scheduler } from "../../infrastructure/GameClient";
+import type { Scheduler } from "../../infrastructure/clientPorts";
 import type { CellDto, RoomViewDto, ShotDto } from "../../shared/protocol";
 import { enemyWatersModel, ownWatersModel } from "../board/boardModel";
 import { renderBoard } from "../board/boardView";

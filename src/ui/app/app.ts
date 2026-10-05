@@ -1,5 +1,6 @@
 import type { RandomSource } from "../../domain/random";
-import type { ClientListener, ClientState, Scheduler } from "../../infrastructure/GameClient";
+import type { Scheduler } from "../../infrastructure/clientPorts";
+import type { ClientListener, ClientState } from "../../infrastructure/clientState";
 import type { Preferences } from "../../infrastructure/LocalStoragePreferences";
 import type { RoomViewDto } from "../../shared/protocol";
 import { h } from "../dom/h";

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { ClientState } from "../../../src/infrastructure/GameClient";
+import type { ClientState } from "../../../src/infrastructure/clientState";
 import type { ShotDto } from "../../../src/shared/protocol";
 import { createSoundEffects } from "../../../src/ui/sound/soundEffects";
 import { gameView, roomView } from "../fixtures";

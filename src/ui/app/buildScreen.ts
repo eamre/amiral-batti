@@ -1,7 +1,8 @@
 import { FleetEditor } from "../../application/FleetEditor";
 import type { GameSettings } from "../../application/GameSettings";
 import type { RandomSource } from "../../domain/random";
-import type { ClientState, Scheduler } from "../../infrastructure/GameClient";
+import type { Scheduler } from "../../infrastructure/clientPorts";
+import type { ClientState } from "../../infrastructure/clientState";
 import type { Preferences } from "../../infrastructure/LocalStoragePreferences";
 import type { CellDto, RoomRulesDto, RoomViewDto, ShipPlacementDto, ShotDto } from "../../shared/protocol";
 import { createBattle } from "../battle/battle";

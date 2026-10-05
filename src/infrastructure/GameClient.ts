@@ -3,61 +3,11 @@ import type {
   ClientMessage,
   ErrorCode,
   RoomRulesDto,
-  RoomViewDto,
   ServerMessage,
   ShipPlacementDto,
-  ShotDto,
 } from "../shared/protocol";
-
-// ---- What the client needs from the outside world ----
-
-export interface SocketHandlers {
-  onOpen(): void;
-  onMessage(text: string): void;
-  onClose(): void;
-}
-
-export interface ClientSocket {
-  send(text: string): void;
-  close(): void;
-}
-
-export type SocketFactory = (handlers: SocketHandlers) => ClientSocket;
-
-/** Where the client keeps the way back to its seat, so a page refresh does not lose the game. */
-export interface Session {
-  readonly code: string;
-  readonly token: string;
-}
-
-export interface SessionStore {
-  load(): Session | undefined;
-  save(session: Session): void;
-  clear(): void;
-}
-
-export type Scheduler = (action: () => void, delayMilliseconds: number) => void;
-
-// ---- What the client tells the screen ----
-
-export type ConnectionStatus = "connecting" | "online" | "offline";
-
-export interface ClientState {
-  readonly status: ConnectionStatus;
-  readonly room?: RoomViewDto;
-  readonly opponentOnline: boolean;
-}
-
-export interface ClientFailure {
-  readonly code: ErrorCode;
-  readonly message: string;
-}
-
-export interface ClientListener {
-  stateChanged(state: ClientState): void;
-  shotFired(shot: ShotDto): void;
-  failed(failure: ClientFailure): void;
-}
+import type { ClientSocket, Scheduler, SessionStore, SocketFactory } from "./clientPorts";
+import type { ClientListener, ClientState } from "./clientState";
 
 export interface GameClientOptions {
   readonly createSocket: SocketFactory;

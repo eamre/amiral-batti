@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from "vitest";
-import type { ClientState, ConnectionStatus } from "../../../src/infrastructure/GameClient";
+import type { ClientState, ConnectionStatus } from "../../../src/infrastructure/clientState";
 import { createNotice } from "../../../src/ui/notice/notice";
 import { gameView, roomView } from "../fixtures";
 

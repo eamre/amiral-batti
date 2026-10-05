@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { describe, expect, it, vi } from "vitest";
 import type { Preferences } from "../../../src/infrastructure/LocalStoragePreferences";
-import type { ClientState, ConnectionStatus } from "../../../src/infrastructure/GameClient";
+import type { ClientState, ConnectionStatus } from "../../../src/infrastructure/clientState";
 import type { RoomViewDto, ShipPlacementDto } from "../../../src/shared/protocol";
 import { createApp } from "../../../src/ui/app/app";
 import { gameView, roomView } from "../fixtures";

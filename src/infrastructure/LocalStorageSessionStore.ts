@@ -1,4 +1,4 @@
-import type { Session, SessionStore } from "./GameClient";
+import type { Session, SessionStore } from "./clientPorts";
 
 /** The part of the browser's Storage that we use. */
 export interface KeyValueStorage {

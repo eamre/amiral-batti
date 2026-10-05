@@ -1,4 +1,5 @@
-import type { ClientState, Scheduler } from "../../infrastructure/GameClient";
+import type { Scheduler } from "../../infrastructure/clientPorts";
+import type { ClientState } from "../../infrastructure/clientState";
 import type { ErrorCode } from "../../shared/protocol";
 import { h } from "../dom/h";
 import { errorText, presenceText } from "./noticeText";

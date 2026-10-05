@@ -1,4 +1,4 @@
-import type { Scheduler } from "../../infrastructure/GameClient";
+import type { Scheduler } from "../../infrastructure/clientPorts";
 import type { BoardSide } from "../app/screenRules";
 
 /**
