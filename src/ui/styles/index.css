@@ -1,0 +1,18 @@
+/*
+ * All the styles of the page, in the order they apply. Later rules win over earlier ones that are
+ * as specific, so the order matters: what every screen shares comes first, then each part of the
+ * game on top of it.
+ *
+ * The shared pieces live here; the rest sits next to the code that builds it, one file per folder.
+ */
+
+/* What every screen shares */
+@import "./theme.css";
+@import "./page.css";
+@import "./components.css";
+
+/* The parts of the game */
+@import "../board/board.css";
+@import "../battle/battle.css";
+@import "../placement/placement.css";
+@import "../room/room.css";

@@ -1,0 +1,44 @@
+/* ---------- Enemy fleet strip ---------- */
+.fleet {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.fleet__header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.fleet__ships {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 14px;
+}
+
+.fleet__ship {
+  width: calc(var(--w) * 16px);
+  height: calc(var(--h) * 16px);
+  overflow: visible;
+}
+
+.fleet__ship--sunk {
+  opacity: 0.5;
+}
+
+/* ---------- Battle ---------- */
+.timer {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer--urgent {
+  color: var(--danger);
+}

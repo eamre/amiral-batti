@@ -1,0 +1,60 @@
+/* ---------- The theme ----------
+   Every colour and size used in the other files comes from here, so a new theme is just another set of values. */
+:root {
+  color-scheme: light;
+
+  --background: #f3f6fb;
+  --card: #ffffff;
+  --text: #14202b;
+  --muted: #5d6c7d;
+  --border: #c9d6e4;
+  --accent: #0b6bcb;
+  --on-accent: #ffffff;
+  --danger: #c93a3a;
+
+  --sea: #d0e2f2;
+  --sea-line: #a9c1da;
+  --ship: #9fb3c6;
+  --ship-line: #66788a;
+  --ship-deck: #b9c9d8;
+  --hit: #d64545;
+  --sunk: #8d2b2b;
+  --miss: #4d6177;
+  --ok: #2e9d62;
+  --bad: #d64545;
+
+  --radius: 14px;
+  --radius-small: 10px;
+  --gap: 12px;
+  --shadow: 0 2px 10px rgb(20 32 43 / 8%);
+  --touch: 48px;
+}
+
+/* The system's dark mode, unless the page was told to stay light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --background: #0e1621;
+    --card: #17222f;
+    --text: #e8eef5;
+    --muted: #93a3b5;
+    --border: #2c3e52;
+    --accent: #4aa3ff;
+    --on-accent: #06182b;
+    --danger: #ff7b7b;
+
+    --sea: #14283d;
+    --sea-line: #2a4562;
+    --ship: #587592;
+    --ship-line: #8fa8c0;
+    --ship-deck: #6f8dab;
+    --hit: #ff6b6b;
+    --sunk: #c24a4a;
+    --miss: #9fb3c6;
+    --ok: #4cc88a;
+    --bad: #ff6b6b;
+
+    --shadow: 0 2px 10px rgb(0 0 0 / 35%);
+  }
+}

@@ -6,7 +6,7 @@ import { createApp } from "./ui/app/app";
 import { SoundSwitch } from "./ui/sound/SoundSwitch";
 import { createSoundEffects } from "./ui/sound/soundEffects";
 import { TonePlayer } from "./ui/sound/TonePlayer";
-import "./ui/app/styles.css";
+import "./ui/styles/index.css";
 
 const TICK_MILLISECONDS = 250;
 

@@ -1,0 +1,10 @@
+/* ---------- Arranging the fleet ---------- */
+.board--placing {
+  /* The finger drags a ship; the page must not scroll under it. */
+  touch-action: none;
+  cursor: grab;
+}
+
+.hint--center {
+  text-align: center;
+}

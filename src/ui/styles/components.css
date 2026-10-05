@@ -1,0 +1,194 @@
+/* ---------- Cards and text ---------- */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: 18px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* The card at the top of a game screen: what is going on, and whose turn it is. */
+.status {
+  gap: 4px;
+}
+
+.status__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gap);
+}
+
+.status__text {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+/* Reserves the line, so the board does not jump when a message appears. */
+.status .hint {
+  min-height: 1.4em;
+}
+
+/* ---------- Buttons ---------- */
+/* A button that is only a picture. It is as big as a finger needs, but looks light. */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch);
+  height: var(--touch);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* `display` above would otherwise win over the `hidden` attribute. */
+.icon-button[hidden] {
+  display: none;
+}
+
+/* A toggle that is on is as strong as the text; one that is off is dimmed. */
+.icon-button[aria-pressed="true"] {
+  color: var(--text);
+}
+
+@media (hover: hover) {
+  .icon-button:hover {
+    color: var(--text);
+  }
+
+  /* Only the way out warns. */
+  .leave .icon-button:hover {
+    color: var(--danger);
+  }
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--touch);
+  padding: 0 18px;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.button--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.button--danger {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: var(--on-accent);
+}
+
+.button--block {
+  width: 100%;
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* A group of buttons that share a row equally. */
+.row {
+  display: flex;
+  gap: var(--gap);
+}
+
+.row > * {
+  flex: 1;
+}
+
+/* ---------- Fields ---------- */
+.field {
+  width: 100%;
+  min-height: var(--touch);
+  padding: 0 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--background);
+}
+
+.field--code {
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-weight: 700;
+}
+
+/* ---------- A choice of one among a few (fleet presets) ---------- */
+.choice {
+  display: flex;
+  gap: 8px;
+}
+
+.choice__option {
+  flex: 1;
+  min-height: var(--touch);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.choice__option[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---------- A checkbox with its words ---------- */
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch);
+  cursor: pointer;
+}
+
+.check input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+}
