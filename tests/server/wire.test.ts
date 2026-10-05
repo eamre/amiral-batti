@@ -108,6 +108,20 @@ describe("toRoomViewDto", () => {
     expect(JSON.parse(JSON.stringify(ship))).toStrictEqual(ship);
   });
 
+  it("reveals the whole fleet of the opponent only when the game is over, as plain data", () => {
+    const over = allShipCells(5).reduce(
+      (current, cell) => current.fire(AHMET.token, cell, NOW).room,
+      roomInBattle(),
+    );
+
+    const during = toRoomViewDto(roomInBattle().viewFor(AHMET.token, NOW)).game;
+    const after = toRoomViewDto(over.viewFor(AHMET.token, NOW)).game;
+
+    expect(during.revealedEnemyShips).toEqual([]);
+    expect(after.revealedEnemyShips).toHaveLength(5);
+    expect(JSON.parse(JSON.stringify(after.revealedEnemyShips))).toStrictEqual(after.revealedEnemyShips);
+  });
+
   it("keeps names, code and rematch votes", () => {
     const dto = toRoomViewDto(roomInBattle().viewFor(AYSE.token, NOW));
 

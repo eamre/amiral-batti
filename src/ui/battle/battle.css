@@ -42,3 +42,33 @@
 .timer--urgent {
   color: var(--danger);
 }
+
+/* ---------- Both fleets, after the game ---------- */
+.dialog.dialog--wide {
+  width: min(980px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+
+.fleets {
+  display: grid;
+  gap: 16px;
+}
+
+.fleets__board {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+}
+
+.fleets__name {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+@media (min-width: 900px) {
+  .fleets {
+    grid-template-columns: 1fr 1fr;
+  }
+}

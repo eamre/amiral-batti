@@ -73,6 +73,29 @@ export function enemyWatersModel(game: GameViewDto, canFire: boolean): BoardMode
   };
 }
 
+/**
+ * The opponent's waters after the game: the shots of the viewer, and the whole fleet of the opponent,
+ * the ships that were never found included. Nobody fires any more. Before the server reveals
+ * the fleet, it shows what is known, as the waters do.
+ */
+export function enemyFleetModel(game: GameViewDto): BoardModel {
+  const waters = enemyWatersModel(game, false);
+
+  if (game.revealedEnemyShips.length === 0) {
+    return waters;
+  }
+  const hitCells = keysOf(game.yourShots.filter((shot) => shot.hit).map((shot) => shot.cell), game);
+
+  return {
+    ...waters,
+    ships: game.revealedEnemyShips.map(({ cells, quarterTurns }) => ({
+      cells,
+      quarterTurns,
+      sunk: cells.every((cell) => hitCells.has(keyOf(cell, game))),
+    })),
+  };
+}
+
 function allCells(
   game: GameViewDto,
   describe: (key: number) => Pick<CellModel, "mark" | "sunk" | "canFire">,

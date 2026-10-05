@@ -99,6 +99,11 @@ export const battleText = {
   rematchAsk: "Tekrar oyna",
   rematchWait: "Rakip bekleniyor…",
   rematchAccept: "Rövanşı kabul et",
+  fleetsShow: "Filoları göster",
+  fleetsTitle: "Oyunun son durumu",
+  fleetsOwn: "Senin filon",
+  fleetsEnemy: "Rakibin filosu",
+  fleetsClose: "Kapat",
 };
 
 export const placementText = {

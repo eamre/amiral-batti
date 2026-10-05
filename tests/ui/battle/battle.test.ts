@@ -244,3 +244,28 @@ describe("createBattle: leaving", () => {
     expect(battle().find("leave")).toBeNull();
   });
 });
+
+describe("createBattle: the fleets after the game", () => {
+  const revealed = [{ cells: [{ row: 2, column: 2 }, { row: 2, column: 3 }], quarterTurns: 0 }];
+  const over = () => {
+    const room = finished();
+    return { ...room, game: { ...room.game, revealedEnemyShips: revealed } };
+  };
+
+  it("offers the button once the game is over", () => {
+    expect(battle(over()).find("fleets")?.hidden).toBe(false);
+  });
+
+  it("offers nothing during the battle", () => {
+    expect(battle().find("fleets")?.hidden).toBe(true);
+  });
+
+  it("keeps the dialog open when the room is updated, as a rematch vote would", () => {
+    const { find, update } = battle(over());
+
+    find("fleets-open")?.click();
+    update({ ...over(), opponentWantsRematch: true });
+
+    expect((find("fleets-dialog") as HTMLDialogElement).open).toBe(true);
+  });
+});

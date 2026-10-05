@@ -7,6 +7,7 @@ import { isUrgent, secondsShown } from "./countdown";
 import { DelayedBoard } from "./DelayedBoard";
 import { h } from "../dom/h";
 import { enemyFleetStatus } from "./fleetStatus";
+import { createFleetsDialog } from "./fleetsDialog";
 import { createFleetStrip } from "./fleetStrip";
 import { canFireNow, shownBoard, statusOf } from "../app/screen";
 import { battleText, shotText, statusText } from "../texts/texts";
@@ -46,6 +47,7 @@ export function createBattle(options: BattleOptions): BattleView {
   const scoreSlot = h("div");
   const boardSlot = h("div", { class: "board-slot" });
   const fleetSlot = h("div");
+  const fleets = createFleetsDialog();
   const rematchSlot = h("div");
 
   function render(): void {
@@ -67,6 +69,7 @@ export function createBattle(options: BattleOptions): BattleView {
         : renderBoard(ownWatersModel(game), { label: battleText.ownWaters, onFire: options.onFire }),
     );
     fleetSlot.replaceChildren(createFleetStrip(enemyFleetStatus(game)));
+    fleets.update(game);
     rematchSlot.replaceChildren(...rematchButton(room));
     showClock();
   }
@@ -118,6 +121,7 @@ export function createBattle(options: BattleOptions): BattleView {
       h("section", { class: "card status" }, h("div", { class: "status__row" }, status, timer), messageLine, scoreSlot),
       boardSlot,
       fleetSlot,
+      fleets.element,
       rematchSlot,
     ),
     update(next, receivedTime) {

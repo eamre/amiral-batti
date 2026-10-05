@@ -73,6 +73,7 @@ function room(code = "ABCD"): RoomViewDto {
       shotsAtYou: [],
       yourShots: [],
       sunkEnemyShips: [],
+      revealedEnemyShips: [],
       knownEmptyEnemyCells: [],
       knownEmptyOwnCells: [],
     },

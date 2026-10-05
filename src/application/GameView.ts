@@ -19,7 +19,7 @@ export interface ShotView {
 /**
  * Everything one player is allowed to know about the game.
  * It is safe to send over the network: the opponent's ships are in it
- * only after they have sunk.
+ * only after they have sunk, or all of them once the game is over.
  */
 export interface GameView {
   readonly you: Player;
@@ -36,6 +36,8 @@ export interface GameView {
   readonly yourShots: readonly ShotView[];
   /** The opponent's ships that have sunk. A ship that is still afloat is never in here. */
   readonly sunkEnemyShips: readonly ShipView[];
+  /** The opponent's whole fleet. Empty until the game is finished. */
+  readonly revealedEnemyShips: readonly ShipView[];
   /** Cells around sunk enemy ships that cannot hold a ship and were not fired at. */
   readonly knownEmptyEnemyCells: readonly Position[];
   /** The same around the viewer's own sunk ships: the opponent knows they are empty too. */
@@ -61,6 +63,7 @@ export function viewFor(game: Game, you: Player, now: number): GameView {
     shotsAtYou: yourFleet?.shotsReceived ?? [],
     yourShots: shotsAt(enemyFleet),
     sunkEnemyShips: enemyFleet?.sunkShips.map(shipViewOf) ?? [],
+    revealedEnemyShips: game.phase === "finished" ? (enemyFleet?.ships.map(shipViewOf) ?? []) : [],
     knownEmptyEnemyCells: emptyCellsNotFiredAt(game, opponent),
     knownEmptyOwnCells: emptyCellsNotFiredAt(game, you),
   };

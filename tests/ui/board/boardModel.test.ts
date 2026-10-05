@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { enemyWatersModel, ownWatersModel, type BoardModel } from "../../../src/ui/board/boardModel";
+import { enemyFleetModel, enemyWatersModel, ownWatersModel, type BoardModel } from "../../../src/ui/board/boardModel";
 import { gameView } from "../fixtures";
 
 function cellAt(board: BoardModel, row: number, column: number) {
@@ -157,5 +157,54 @@ describe("enemyWatersModel", () => {
     const board = enemyWatersModel(gameView(), false);
 
     expect(board.cells.some((cell) => cell.canFire)).toBe(false);
+  });
+});
+
+describe("enemyFleetModel", () => {
+  const sunkBoat = [{ row: 1, column: 1 }, { row: 1, column: 2 }];
+  const afloatBoat = [{ row: 6, column: 3 }, { row: 7, column: 3 }];
+  const over = (changes = {}) =>
+    gameView({
+      phase: "finished",
+      revealedEnemyShips: [
+        { cells: sunkBoat, quarterTurns: 0 },
+        { cells: afloatBoat, quarterTurns: 3 },
+      ],
+      sunkEnemyShips: [{ cells: sunkBoat, quarterTurns: 0 }],
+      yourShots: [
+        ...sunkBoat.map((cell) => ({ cell, hit: true })),
+        { cell: afloatBoat[0] as { row: number; column: number }, hit: true },
+        { cell: { row: 9, column: 9 }, hit: false },
+      ],
+      ...changes,
+    });
+
+  it("shows every ship of the opponent, turned the way it stood", () => {
+    const board = enemyFleetModel(over());
+
+    expect(board.ships.map((ship) => ship.quarterTurns)).toEqual([0, 3]);
+    expect(board.ships.map((ship) => ship.cells)).toEqual([sunkBoat, afloatBoat]);
+  });
+
+  it("calls a ship sunk only when every cell of it was hit", () => {
+    expect(enemyFleetModel(over()).ships.map((ship) => ship.sunk)).toEqual([true, false]);
+  });
+
+  it("keeps the shots of the viewer on the board", () => {
+    const board = enemyFleetModel(over());
+
+    expect(cellAt(board, 6, 3).mark).toBe("hit");
+    expect(cellAt(board, 9, 9).mark).toBe("water");
+    expect(cellAt(board, 7, 3).mark).toBe("none");
+  });
+
+  it("lets nobody fire", () => {
+    expect(enemyFleetModel(over()).cells.some((cell) => cell.canFire)).toBe(false);
+  });
+
+  it("falls back to the ships found so far when nothing was revealed", () => {
+    const board = enemyFleetModel(over({ revealedEnemyShips: [] }));
+
+    expect(board.ships).toEqual([{ cells: sunkBoat, quarterTurns: 0, sunk: true }]);
   });
 });

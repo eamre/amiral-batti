@@ -141,6 +141,13 @@ describe("viewFor", () => {
       expect(ship?.cells).toEqual(expect.arrayContaining([new Position(7, 9), new Position(8, 9)]));
     });
 
+    it("keeps the opponent's fleet to himself while the battle goes on, even the ships that are hit", () => {
+      const game = fireAll(gameInBattle(), "first", [...secondsBoat, new Position(0, 5)]);
+
+      expect(viewFor(game, "first", NOW).revealedEnemyShips).toEqual([]);
+      expect(viewFor(game, "second", NOW).revealedEnemyShips).toEqual([]);
+    });
+
     it("lists the cells around a sunk ship as known to be empty", () => {
       const game = fireAll(gameInBattle(), "first", secondsBoat);
 
@@ -221,5 +228,47 @@ describe("viewFor", () => {
       expect(viewFor(game, "second", NOW).wins).toEqual({ first: 1, second: 0 });
       expect(viewFor(game, "first", NOW).phase).toBe("finished");
     });
+  });
+});
+
+describe("viewFor: when the game is over", () => {
+  const won = () => fireAll(gameInBattle(), "first", allShipCells(5));
+
+  it("shows the whole fleet of the opponent to the one who won", () => {
+    const view = viewFor(won(), "first", NOW);
+
+    expect(view.phase).toBe("finished");
+    expect(view.revealedEnemyShips).toHaveLength(5);
+    expect(view.revealedEnemyShips.flatMap((ship) => ship.cells)).toEqual(
+      expect.arrayContaining(allShipCells(5)),
+    );
+    expect(view.revealedEnemyShips.flatMap((ship) => ship.cells)).toHaveLength(allShipCells(5).length);
+  });
+
+  it("shows the whole fleet of the winner to the one who lost, ships he never found included", () => {
+    const view = viewFor(won(), "second", NOW);
+
+    expect(view.revealedEnemyShips.flatMap((ship) => ship.cells)).toEqual(
+      expect.arrayContaining(allShipCells(0)),
+    );
+    expect(view.revealedEnemyShips).toHaveLength(5);
+  });
+
+  it("tells how each ship stood", () => {
+    const turnedBoat = { kind: "boat", origin: new Position(7, 9), quarterTurns: 3 } as const;
+    const game = Game.create()
+      .markReady("first", placementsFrom(0), NOW)
+      .markReady("second", [...placementsFrom(5).slice(0, 4), turnedBoat], NOW);
+    const lost = fireAll(game, "first", [...allShipCells(5).slice(0, -2), new Position(7, 9), new Position(8, 9)]);
+
+    expect(viewFor(lost, "first", NOW).revealedEnemyShips.map((ship) => ship.quarterTurns).sort()).toEqual([0, 0, 0, 0, 3]);
+  });
+
+  it("goes back to showing nothing when the next game begins", () => {
+    const finished = won();
+    const next = finished.nextRound();
+
+    expect(next.phase).toBe("placing");
+    expect(viewFor(next, "first", NOW).revealedEnemyShips).toEqual([]);
   });
 });

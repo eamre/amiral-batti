@@ -18,6 +18,7 @@ export function gameView(changes: Partial<GameViewDto> = {}): GameViewDto {
     shotsAtYou: [],
     yourShots: [],
     sunkEnemyShips: [],
+    revealedEnemyShips: [],
     knownEmptyEnemyCells: [],
     knownEmptyOwnCells: [],
     ...changes,
