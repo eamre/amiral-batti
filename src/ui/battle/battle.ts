@@ -47,9 +47,9 @@ export function createBattle(options: BattleOptions): BattleView {
   const messageLine = h("p", { class: "hint", attrs: { "data-role": "message" } });
   const scoreSlot = h("div");
   const boardSlot = h("div", { class: "board-slot" });
-  const fleetSlot = h("div");
+  const fleetSlot = h("div", { class: "fleet-slot" });
   const fleets = createFleetsDialog();
-  const rematchSlot = h("div");
+  const rematchSlot = h("div", { class: "rematch-slot" });
 
   function render(): void {
     if (room === undefined) {
@@ -118,7 +118,7 @@ export function createBattle(options: BattleOptions): BattleView {
   return {
     element: h(
       "div",
-      { class: "screen" },
+      { class: "screen screen--battle" },
       h("section", { class: "card status" }, h("div", { class: "status__row" }, status, timer), messageLine, scoreSlot),
       boardSlot,
       fleetSlot,

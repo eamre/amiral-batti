@@ -72,3 +72,22 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/*
+ * On a phone the enemy fleet sits right under the status card, above the board: the page is as high as
+ * the window and the board is limited by the width, so this uses the free space at the bottom better.
+ * The order is only changed here; the elements are written in the same order for every window.
+ */
+@media (max-width: 599px) {
+  .screen--battle > .fleet-slot {
+    order: 1;
+  }
+
+  .screen--battle > .board-slot {
+    order: 2;
+  }
+
+  .screen--battle > .rematch-slot {
+    order: 3;
+  }
+}
