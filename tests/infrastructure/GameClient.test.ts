@@ -80,6 +80,7 @@ describe("GameClient", () => {
   let states: ClientState[];
   let shots: ShotDto[];
   let failures: ClientFailure[];
+  let opponentLeft: number;
   let client: GameClient;
 
   const socket = (): FakeSocket => sockets[sockets.length - 1] as FakeSocket;
@@ -106,10 +107,12 @@ describe("GameClient", () => {
     states = [];
     shots = [];
     failures = [];
+    opponentLeft = 0;
     const listener: ClientListener = {
       stateChanged: (state) => states.push(state),
       shotFired: (shot) => shots.push(shot),
       failed: (failure) => failures.push(failure),
+      opponentLeft: () => (opponentLeft += 1),
     };
     client = new GameClient({
       createSocket: (handlers) => {
@@ -356,7 +359,59 @@ describe("GameClient", () => {
     });
   });
 
+  describe("when the opponent leaves for good", () => {
+    it("forgets the seat and the room, which are closed", () => {
+      connectAndOpen();
+      enter();
+
+      socket().hear({ type: "opponent-left" });
+
+      expect(store.session).toBeUndefined();
+      expect(client.currentState.room).toBeUndefined();
+      expect(client.currentState.opponentOnline).toBe(false);
+    });
+
+    it("tells the listener, who decides what the player is told", () => {
+      connectAndOpen();
+      enter();
+
+      socket().hear({ type: "opponent-left" });
+
+      expect(opponentLeft).toBe(1);
+      expect(failures).toEqual([]);
+    });
+
+    it("stays connected, so the player can start another room", () => {
+      connectAndOpen();
+      enter();
+
+      socket().hear({ type: "opponent-left" });
+
+      expect(sockets[0]?.closed).toBe(false);
+      expect(client.create("Ahmet", RULES)).toBe(true);
+    });
+  });
+
   describe("leave", () => {
+    it("tells the server that the player is leaving for good, before the connection closes", () => {
+      connectAndOpen();
+      enter();
+
+      client.leave();
+
+      expect(sockets[0]?.messages).toEqual([{ type: "leave" }]);
+    });
+
+    it("does not need the server to hear it: offline, it only forgets", () => {
+      client.start();
+      store.session = { code: "ABCD", token: "secret" };
+
+      client.leave();
+
+      expect(store.session).toBeUndefined();
+      expect(sockets[0]?.messages).toEqual([]);
+    });
+
     it("forgets the seat and the room", () => {
       connectAndOpen();
       enter();

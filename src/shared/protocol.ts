@@ -37,7 +37,9 @@ export type ClientMessage =
   | { readonly type: "rejoin"; readonly code: string; readonly token: string }
   | { readonly type: "ready"; readonly ships: readonly ShipPlacementDto[] }
   | { readonly type: "fire"; readonly cell: CellDto }
-  | { readonly type: "rematch" };
+  | { readonly type: "rematch" }
+  /** The player walks away for good, unlike a lost connection, from which he can come back. */
+  | { readonly type: "leave" };
 
 // ---- What one player is allowed to see ----
 
@@ -104,4 +106,6 @@ export type ServerMessage =
   | { readonly type: "state"; readonly room: RoomViewDto }
   | { readonly type: "shot"; readonly shot: ShotDto }
   | { readonly type: "presence"; readonly opponentOnline: boolean }
+  /** The opponent left for good. The room is closed and nobody sits in it any more. */
+  | { readonly type: "opponent-left" }
   | { readonly type: "error"; readonly code: ErrorCode; readonly message: string };

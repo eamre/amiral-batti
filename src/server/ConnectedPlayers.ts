@@ -61,6 +61,13 @@ export class ConnectedPlayers {
     }
   }
 
+  /** Everybody in the room is out of it. Their connections stay open: they may go on to another room. */
+  releaseRoom(code: string): void {
+    for (const [connection] of this.connectionsIn(code)) {
+      this.seats.delete(connection);
+    }
+  }
+
   /** Only one browser per seat: a new one pushes the old one out. */
   closeOthersAt(code: string, token: string): void {
     for (const [connection, seat] of this.connectionsIn(code)) {

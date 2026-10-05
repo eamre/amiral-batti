@@ -19,4 +19,6 @@ export interface ClientListener {
   stateChanged(state: ClientState): void;
   shotFired(shot: ShotDto): void;
   failed(failure: ClientFailure): void;
+  /** The opponent walked away for good: the room is closed and the client has no seat any more. */
+  opponentLeft(): void;
 }

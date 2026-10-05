@@ -18,7 +18,7 @@ export interface GameClientOptions {
 
 const RECONNECT_DELAY_MILLISECONDS = 1_500;
 
-const SERVER_MESSAGE_TYPES: readonly string[] = ["entered", "state", "shot", "presence", "error"];
+const SERVER_MESSAGE_TYPES: readonly string[] = ["entered", "state", "shot", "presence", "opponent-left", "error"];
 
 /**
  * The browser's side of the conversation with the server.
@@ -69,6 +69,8 @@ export class GameClient {
 
   /** Walks away from the room for good: the seat is forgotten here, not only the connection. */
   leave(): void {
+    // Told first: once the connection is closed, the server would take it for a lost connection and wait.
+    this.send({ type: "leave" });
     this.options.store.clear();
     this.update({ room: undefined, opponentOnline: false });
     this.socket?.close();
@@ -124,6 +126,11 @@ export class GameClient {
         return;
       case "shot":
         this.options.listener.shotFired(message.shot);
+        return;
+      case "opponent-left":
+        this.options.store.clear();
+        this.update({ room: undefined, opponentOnline: false });
+        this.options.listener.opponentLeft();
         return;
       case "error":
         this.handleError(message.code, message.message);

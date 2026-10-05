@@ -366,6 +366,84 @@ describe("GameServer", () => {
     });
   });
 
+  describe("leave", () => {
+    it("tells the opponent that the player has left for good", () => {
+      startRoom();
+
+      say(ayse, { type: "leave" });
+
+      expect(ahmet.of("opponent-left")).toHaveLength(1);
+    });
+
+    it("tells the one who leaves nothing", () => {
+      startRoom();
+      const before = ayse.received.length;
+
+      say(ayse, { type: "leave" });
+
+      expect(ayse.received).toHaveLength(before);
+    });
+
+    it("closes the room: nobody can come back to it, with a token or a code", () => {
+      startRoom();
+      const code = codeOfRoom();
+      say(ayse, { type: "leave" });
+      const returned = new FakeConnection();
+
+      say(returned, { type: "rejoin", code, token: "token-1" });
+      say(returned, { type: "join", code, name: "Late" });
+
+      expect(returned.of("error").map((error) => error.code)).toEqual(["no-such-room", "no-such-room"]);
+    });
+
+    it("lets the one who stays go too: he sits nowhere afterwards", () => {
+      startBattle();
+      say(ayse, { type: "leave" });
+
+      say(ahmet, { type: "fire", cell: { row: 9, column: 9 } });
+
+      expect(ahmet.of("error").at(-1)?.code).toBe("not-in-room");
+    });
+
+    it("works when the player is alone in the room", () => {
+      say(ahmet, { type: "create", name: "Ahmet", rules: RULES });
+      const code = codeOfRoom();
+
+      say(ahmet, { type: "leave" });
+
+      const returned = new FakeConnection();
+      say(returned, { type: "join", code, name: "Late" });
+      expect(returned.of("error")[0]?.code).toBe("no-such-room");
+    });
+
+    it("is not an error to leave when there is no room", () => {
+      say(ahmet, { type: "leave" });
+
+      expect(ahmet.received).toEqual([]);
+    });
+
+    it("does not touch other rooms", () => {
+      startRoom();
+      const other = new FakeConnection();
+      const otherFriend = new FakeConnection();
+      say(other, { type: "create", name: "Other", rules: RULES });
+      say(otherFriend, { type: "join", code: other.of("entered")[0]?.room.code ?? "", name: "Friend" });
+
+      say(ayse, { type: "leave" });
+
+      expect(other.of("opponent-left")).toEqual([]);
+      expect(otherFriend.of("opponent-left")).toEqual([]);
+    });
+
+    it("is not the same as going away: a disconnected player can still come back", () => {
+      startRoom();
+
+      server.disconnect(ayse);
+
+      expect(ahmet.of("opponent-left")).toEqual([]);
+    });
+  });
+
   describe("tick", () => {
     it("does nothing while the player still has time", () => {
       startBattle();

@@ -97,6 +97,8 @@ export class GameServer {
         return this.fire(connection, message);
       case "rematch":
         return this.rematch(connection);
+      case "leave":
+        return this.leave(connection);
     }
   }
 
@@ -151,6 +153,19 @@ export class GameServer {
     const { room, token, now } = this.contextOf(connection);
 
     this.commit(room.voteForRematch(token), now);
+  }
+
+  /** Walking away for good closes the room. The other player is told, and has no seat left either. */
+  private leave(connection: Connection): void {
+    const seat = this.players.seatOf(connection);
+
+    if (seat === undefined) {
+      return;
+    }
+
+    this.players.sendToRoom(seat.code, { type: "opponent-left" }, connection);
+    this.players.releaseRoom(seat.code);
+    this.registry.remove(seat.code);
   }
 
   /** The browser takes its seat: it hears the whole truth and the others hear it is back. */

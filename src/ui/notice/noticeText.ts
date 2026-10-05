@@ -28,4 +28,5 @@ export const errorText: Record<ErrorCode, string> = {
 
 export const presenceText = {
   opponentOffline: "Rakibin bağlantısı koptu. Dönmesi bekleniyor…",
+  opponentLeft: "Rakibin odadan ayrıldı. Yeni bir oyun kurabilirsin.",
 };

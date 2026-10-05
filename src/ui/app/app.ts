@@ -95,6 +95,9 @@ export function createApp(options: AppOptions): App {
       failed(failure) {
         notice.complain(failure.code);
       },
+      opponentLeft() {
+        notice.opponentLeft();
+      },
     },
   };
 }

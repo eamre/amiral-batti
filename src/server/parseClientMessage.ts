@@ -35,6 +35,8 @@ export function parseClientMessage(raw: string): ClientMessage | undefined {
       return parseFire(fields);
     case "rematch":
       return { type: "rematch" };
+    case "leave":
+      return { type: "leave" };
     default:
       return undefined;
   }

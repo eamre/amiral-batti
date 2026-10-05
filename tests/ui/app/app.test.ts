@@ -489,6 +489,17 @@ describe("createApp: the notice", () => {
     expect(role("notice")?.textContent).toBe("");
   });
 
+  it("tells the player that the opponent has left, and lets the screen go back to the lobby", () => {
+    const { app, show, role } = newApp();
+    show(state(roomView()));
+
+    show(state(undefined));
+    app.listener.opponentLeft();
+
+    expect(role("notice")?.textContent).toBe("Rakibin odadan ayrıldı. Yeni bir oyun kurabilirsin.");
+    expect(app.element.getAttribute("data-screen")).toBe("lobby");
+  });
+
   it("says when the opponent has lost his connection", () => {
     const { show, role } = newApp();
 

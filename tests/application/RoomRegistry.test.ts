@@ -87,6 +87,32 @@ describe("RoomRegistry", () => {
     });
   });
 
+  describe("remove", () => {
+    it("forgets a room at once", () => {
+      const rooms = registry();
+      const room = rooms.open(DEFAULT_GAME_SETTINGS, AHMET, NOW);
+
+      rooms.remove(room.code);
+
+      expect(rooms.find(room.code)).toBeUndefined();
+      expect(rooms.all()).toEqual([]);
+    });
+
+    it("leaves the other rooms alone", () => {
+      const rooms = registry();
+      const closed = rooms.open(DEFAULT_GAME_SETTINGS, AHMET, NOW);
+      const kept = rooms.open(DEFAULT_GAME_SETTINGS, AHMET, NOW);
+
+      rooms.remove(closed.code);
+
+      expect(rooms.find(kept.code)).toBe(kept);
+    });
+
+    it("does not mind a code nobody opened", () => {
+      expect(() => registry().remove("NONE")).not.toThrow();
+    });
+  });
+
   describe("removeAbandoned", () => {
     it("removes a room that nobody is in and that has been quiet for too long", () => {
       const rooms = registry();

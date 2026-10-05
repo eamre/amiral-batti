@@ -58,6 +58,7 @@ client = new GameClient({
       effects.shotFired(shot);
     },
     failed: (failure) => app.listener.failed(failure),
+    opponentLeft: () => app.listener.opponentLeft(),
   },
 });
 

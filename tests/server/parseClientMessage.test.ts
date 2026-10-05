@@ -126,6 +126,12 @@ describe("parseClientMessage", () => {
     });
   });
 
+  describe("leave", () => {
+    it("accepts the message", () => {
+      expect(parse({ type: "leave" })).toEqual({ type: "leave" });
+    });
+  });
+
   describe("anything else", () => {
     it.each([
       ["text that is not JSON", "not json {"],

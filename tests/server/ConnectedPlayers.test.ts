@@ -122,3 +122,27 @@ describe("ConnectedPlayers: one browser per seat", () => {
     expect(players.seatOf(ayse.connection)).toEqual({ code: "ABCD", token: "ayse" });
   });
 });
+
+describe("ConnectedPlayers: closing a room", () => {
+  it("lets every browser of the room go, without closing them", () => {
+    const { players, ahmet, ayse } = tableOfTwo();
+
+    players.releaseRoom("ABCD");
+
+    expect(players.seatOf(ahmet.connection)).toBeUndefined();
+    expect(players.seatOf(ayse.connection)).toBeUndefined();
+    expect(players.hasAnyoneIn("ABCD")).toBe(false);
+    expect(ahmet.wasClosed()).toBe(false);
+    expect(ayse.wasClosed()).toBe(false);
+  });
+
+  it("leaves the browsers of other rooms seated", () => {
+    const { players } = tableOfTwo();
+    const stranger = browser();
+    players.seat(stranger.connection, { code: "WXYZ", token: "stranger" });
+
+    players.releaseRoom("ABCD");
+
+    expect(players.seatOf(stranger.connection)).toEqual({ code: "WXYZ", token: "stranger" });
+  });
+});

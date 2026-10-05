@@ -89,6 +89,35 @@ describe("createNotice: things that went wrong", () => {
   });
 });
 
+describe("createNotice: the opponent has left for good", () => {
+  it("says so", () => {
+    const { notice, text } = newNotice();
+
+    notice.opponentLeft();
+
+    expect(text()).toBe("Rakibin odadan ayrıldı. Yeni bir oyun kurabilirsin.");
+  });
+
+  it("stops saying it after a while, like a problem", () => {
+    const { notice, text, firstLaterIsNow } = newNotice();
+    notice.opponentLeft();
+
+    firstLaterIsNow();
+
+    expect(text()).toBe("");
+  });
+
+  it("is not taken away early by an older message that times out", () => {
+    const { notice, text, firstLaterIsNow } = newNotice();
+    notice.complain("room-full");
+    notice.opponentLeft();
+
+    firstLaterIsNow();
+
+    expect(text()).toBe("Rakibin odadan ayrıldı. Yeni bir oyun kurabilirsin.");
+  });
+});
+
 describe("createNotice: the opponent's connection", () => {
   it("says when the opponent has lost his connection", () => {
     const { notice, text } = newNotice();

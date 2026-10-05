@@ -42,6 +42,11 @@ export class RoomRegistry {
     this.entries.set(room.code, { room, lastActivityAt: now });
   }
 
+  /** Closes a room at once. */
+  remove(code: string): void {
+    this.entries.delete(code);
+  }
+
   touch(code: string, now: number): void {
     const entry = this.entries.get(code);
 
