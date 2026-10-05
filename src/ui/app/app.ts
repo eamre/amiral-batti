@@ -1,7 +1,4 @@
-import type { RandomSource } from "../../domain/random";
-import type { Scheduler } from "../../infrastructure/clientPorts";
 import type { ClientListener, ClientState } from "../../infrastructure/clientState";
-import type { Preferences } from "../../infrastructure/LocalStoragePreferences";
 import type { RoomViewDto } from "../../shared/protocol";
 import { h } from "../dom/h";
 import { createNotice } from "../notice/notice";
@@ -10,19 +7,16 @@ import { createLeaveControl } from "../room/leaveControl";
 import type { Muting } from "../sound/sound";
 import { createSoundToggle } from "../sound/soundToggle";
 import { screenKindOf, type ScreenKind } from "./screenRules";
-import { buildScreen, type Commands, type ScreenView } from "./buildScreen";
+import { buildScreen, type ScreenContext, type ScreenView } from "./buildScreen";
 
 const APP_TITLE = "Amiral Battı";
 
-export interface AppOptions {
-  readonly commands: Commands;
-  readonly preferences: Preferences;
+/** What the screens need, and the two things only the header uses. */
+export interface AppOptions extends ScreenContext {
+  /** Walks away from the room for good. Only the header offers it; no screen does. */
+  readonly leave: () => void;
   /** The player's choice to hear the game or not. The app only shows and changes it; the sounds are played elsewhere. */
   readonly sound: Muting;
-  readonly copy: (text: string) => void;
-  readonly random: RandomSource;
-  readonly now: () => number;
-  readonly schedule: Scheduler;
 }
 
 export interface App {
@@ -40,13 +34,12 @@ export interface App {
  * is dragging is not taken away because the opponent has come into the room.
  */
 export function createApp(options: AppOptions): App {
-  const { commands } = options;
   let state: ClientState = { status: "connecting", opponentOnline: false };
   let receivedAt = options.now();
   let current: { readonly kind: ScreenKind; readonly view: ScreenView } | undefined;
 
   const connection = h("span", { class: "connection", attrs: { "data-role": "connection" } });
-  const leave = createLeaveControl(() => commands.leave());
+  const leave = createLeaveControl(options.leave);
   const notice = createNotice(options.schedule);
   const slot = h("div", { class: "screen" });
   const element = h(

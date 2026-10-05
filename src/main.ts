@@ -30,8 +30,8 @@ const app = createApp({
     ready: (ships) => client.ready(ships),
     fire: (cell) => client.fire(cell),
     rematch: () => client.rematch(),
-    leave: () => client.leave(),
   },
+  leave: () => client.leave(),
   preferences,
   sound,
   // Only pages served over https (or from localhost) may use the clipboard.

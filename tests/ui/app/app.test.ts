@@ -42,8 +42,8 @@ function newApp(remembered: { name?: string; layout?: ShipPlacementDto[] } = {})
     ready: vi.fn(),
     fire: vi.fn(),
     rematch: vi.fn(),
-    leave: vi.fn(),
   };
+  const leave = vi.fn();
   const preferences = {
     loadName: vi.fn(() => remembered.name ?? ""),
     saveName: vi.fn(),
@@ -62,6 +62,7 @@ function newApp(remembered: { name?: string; layout?: ShipPlacementDto[] } = {})
   const copy = vi.fn();
   const app = createApp({
     commands,
+    leave,
     preferences,
     sound,
     copy,
@@ -76,6 +77,7 @@ function newApp(remembered: { name?: string; layout?: ShipPlacementDto[] } = {})
   return {
     app,
     commands,
+    leave,
     preferences,
     sound,
     copy,
@@ -87,7 +89,6 @@ function newApp(remembered: { name?: string; layout?: ShipPlacementDto[] } = {})
       app.tick();
     },
     laterIsNow: () => later.splice(0).forEach((action) => action()),
-    /** Only the one that was asked for first. */
     type: (field: HTMLElement | null, text: string) => {
       (field as HTMLInputElement).value = text;
       field?.dispatchEvent(new Event("input"));
@@ -172,33 +173,33 @@ describe("createApp: the way out of a room", () => {
   });
 
   it.each(Object.entries(screens))("asks before it leaves the room while %s", (_screen, room) => {
-    const { show, role, commands } = newApp();
+    const { show, role, leave } = newApp();
     show(state(room()));
 
     role("leave-open")?.click();
 
-    expect(commands.leave).not.toHaveBeenCalled();
+    expect(leave).not.toHaveBeenCalled();
     expect((role("leave-dialog") as HTMLDialogElement).open).toBe(true);
   });
 
   it.each(Object.entries(screens))("leaves the room once the player has said yes while %s", (_screen, room) => {
-    const { show, role, commands } = newApp();
+    const { show, role, leave } = newApp();
     show(state(room()));
 
     role("leave-open")?.click();
     role("leave-confirm")?.click();
 
-    expect(commands.leave).toHaveBeenCalledTimes(1);
+    expect(leave).toHaveBeenCalledTimes(1);
   });
 
   it("stays in the room when the player says no", () => {
-    const { show, role, commands } = newApp();
+    const { show, role, leave } = newApp();
     show(state(roomView()));
 
     role("leave-open")?.click();
     role("leave-stay")?.click();
 
-    expect(commands.leave).not.toHaveBeenCalled();
+    expect(leave).not.toHaveBeenCalled();
   });
 });
 
@@ -449,7 +450,7 @@ describe("createApp: the battle", () => {
   });
 
   it("asks for a rematch and can leave", () => {
-    const { show, role, commands } = newApp();
+    const { show, role, commands, leave } = newApp();
     show(state(roomView({ game: gameView({ phase: "finished", winner: "first", yourTurn: false, secondsLeft: undefined }) })));
 
     role("rematch")?.click();
@@ -457,7 +458,7 @@ describe("createApp: the battle", () => {
     role("leave-confirm")?.click();
 
     expect(commands.rematch).toHaveBeenCalledTimes(1);
-    expect(commands.leave).toHaveBeenCalledTimes(1);
+    expect(leave).toHaveBeenCalledTimes(1);
   });
 
   it("starts arranging again when a new round begins", () => {

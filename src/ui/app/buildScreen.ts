@@ -18,12 +18,11 @@ import type { ScreenKind } from "./screenRules";
 
 /** What the screens can ask the server to do. `GameClient` has all of these. */
 export interface Commands {
-  create(name: string, rules: RoomRulesDto): unknown;
-  join(code: string, name: string): unknown;
-  ready(ships: readonly ShipPlacementDto[]): unknown;
-  fire(cell: CellDto): unknown;
-  rematch(): unknown;
-  leave(): unknown;
+  create(name: string, rules: RoomRulesDto): void;
+  join(code: string, name: string): void;
+  ready(ships: readonly ShipPlacementDto[]): void;
+  fire(cell: CellDto): void;
+  rematch(): void;
 }
 
 /** Everything a screen needs from the outside to be built. */
