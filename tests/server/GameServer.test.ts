@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { GameServer, type Connection } from "../../src/server/GameServer";
+import type { Connection } from "../../src/server/ConnectedPlayers";
+import { GameServer } from "../../src/server/GameServer";
 import type { ClientMessage, ServerMessage } from "../../src/shared/protocol";
 import { allShipCells, placementsFrom } from "../application/fixtures";
 

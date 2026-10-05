@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
 import { WebSocketServer, type WebSocket } from "ws";
-import { GameServer, type Connection } from "./GameServer";
+import type { Connection } from "./ConnectedPlayers";
+import { GameServer } from "./GameServer";
 
 const PORT = Number(process.env.PORT ?? 3000);
 const MAX_MESSAGE_BYTES = 16 * 1024;

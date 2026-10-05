@@ -4,25 +4,15 @@ import { DEFAULT_GAME_SETTINGS, type GameSettings } from "../application/GameSet
 import type { Room } from "../application/Room";
 import { RoomRegistry } from "../application/RoomRegistry";
 import type { RandomSource } from "../domain/random";
-import type { ClientMessage, RoomRulesDto, ServerMessage } from "../shared/protocol";
+import type { ClientMessage, RoomRulesDto } from "../shared/protocol";
+import { ConnectedPlayers, type Connection } from "./ConnectedPlayers";
 import { parseClientMessage } from "./parseClientMessage";
 import { toPlacements, toPosition, toRoomViewDto, toShotDto } from "./wire";
-
-/** One browser, as the server sees it. The real one is a WebSocket; tests use a fake. */
-export interface Connection {
-  send(message: ServerMessage): void;
-  close(): void;
-}
 
 export interface GameServerOptions {
   readonly clock: () => number;
   readonly random: RandomSource;
   readonly newToken: () => string;
-}
-
-interface Binding {
-  readonly code: string;
-  readonly token: string;
 }
 
 const ABANDONED_AFTER_MILLISECONDS = 60 * 60 * 1000;
@@ -33,7 +23,7 @@ const ABANDONED_AFTER_MILLISECONDS = 60 * 60 * 1000;
  */
 export class GameServer {
   private readonly registry: RoomRegistry;
-  private readonly bindings = new Map<Connection, Binding>();
+  private readonly players = new ConnectedPlayers();
 
   constructor(private readonly options: GameServerOptions) {
     this.registry = new RoomRegistry(options.random);
@@ -60,15 +50,14 @@ export class GameServer {
 
   /** A browser went away. Its seat stays: it can come back with its token. */
   disconnect(connection: Connection): void {
-    const binding = this.bindings.get(connection);
+    const seat = this.players.release(connection);
 
-    if (binding === undefined) {
+    if (seat === undefined) {
       return;
     }
 
-    this.bindings.delete(connection);
-    this.registry.touch(binding.code, this.options.clock());
-    this.sendToRoom(binding.code, { type: "presence", opponentOnline: false });
+    this.registry.touch(seat.code, this.options.clock());
+    this.players.sendToRoom(seat.code, { type: "presence", opponentOnline: false });
   }
 
   /** Called every second: a player who ran out of time gets a random shot. */
@@ -90,7 +79,7 @@ export class GameServer {
     return this.registry.removeAbandoned(
       this.options.clock(),
       ABANDONED_AFTER_MILLISECONDS,
-      (code) => this.connectionsIn(code).length > 0,
+      (code) => this.players.hasAnyoneIn(code),
     );
   }
 
@@ -140,7 +129,7 @@ export class GameServer {
     }
 
     this.disconnect(connection);
-    this.dropOtherConnectionsOf(room.code, token);
+    this.players.closeOthersAt(room.code, token);
     this.sit(connection, room, token);
   }
 
@@ -168,14 +157,14 @@ export class GameServer {
   private sit(connection: Connection, room: Room, token: string): void {
     const now = this.options.clock();
 
-    this.bindings.set(connection, { code: room.code, token });
+    this.players.seat(connection, { code: room.code, token });
     connection.send({
       type: "entered",
       token,
       room: toRoomViewDto(room.viewFor(token, now)),
-      opponentOnline: this.connectionsIn(room.code).some(([, other]) => other.token !== token),
+      opponentOnline: this.players.hasAnyoneBesides(room.code, token),
     });
-    this.sendToRoom(room.code, { type: "presence", opponentOnline: true }, connection);
+    this.players.sendToRoom(room.code, { type: "presence", opponentOnline: true }, connection);
   }
 
   private commit(room: Room, now: number): void {
@@ -184,47 +173,25 @@ export class GameServer {
   }
 
   private announceShot(code: string, shot: ShotReport): void {
-    this.sendToRoom(code, { type: "shot", shot: toShotDto(shot) });
+    this.players.sendToRoom(code, { type: "shot", shot: toShotDto(shot) });
   }
 
   /** Every browser in the room gets the room as its own player may see it. */
   private sendStateToRoom(room: Room, now: number, except?: Connection): void {
-    for (const [connection, binding] of this.connectionsIn(room.code)) {
-      if (connection !== except) {
-        connection.send({ type: "state", room: toRoomViewDto(room.viewFor(binding.token, now)) });
-      }
-    }
-  }
-
-  private sendToRoom(code: string, message: ServerMessage, except?: Connection): void {
-    for (const [connection] of this.connectionsIn(code)) {
-      if (connection !== except) {
-        connection.send(message);
-      }
-    }
-  }
-
-  /** Only one browser per seat: a new one pushes the old one out. */
-  private dropOtherConnectionsOf(code: string, token: string): void {
-    for (const [connection, binding] of this.connectionsIn(code)) {
-      if (binding.token === token) {
-        this.bindings.delete(connection);
-        connection.close();
-      }
-    }
-  }
-
-  private connectionsIn(code: string): [Connection, Binding][] {
-    return [...this.bindings].filter(([, binding]) => binding.code === code);
+    this.players.sendToEach(
+      room.code,
+      ({ token }) => ({ type: "state", room: toRoomViewDto(room.viewFor(token, now)) }),
+      except,
+    );
   }
 
   private contextOf(connection: Connection): { room: Room; token: string; now: number } {
-    const binding = this.bindings.get(connection);
+    const seat = this.players.seatOf(connection);
 
-    if (binding === undefined) {
+    if (seat === undefined) {
       throw new GameRuleError("not-in-room", "Create or join a room first.");
     }
-    return { room: this.roomWithCode(binding.code), token: binding.token, now: this.options.clock() };
+    return { room: this.roomWithCode(seat.code), token: seat.token, now: this.options.clock() };
   }
 
   private roomWithCode(code: string): Room {
