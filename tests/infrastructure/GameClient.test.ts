@@ -261,6 +261,23 @@ describe("GameClient", () => {
 
       expect(store.session).toBeUndefined();
       expect(client.currentState.room).toBeUndefined();
+    });
+
+    it("says nothing about it: the player asked for no room, so there is no refusal to report", () => {
+      store.session = { code: "ABCD", token: "secret" };
+      connectAndOpen();
+
+      socket().hear({ type: "error", code: "no-such-room", message: "Gone." });
+
+      expect(failures).toEqual([]);
+    });
+
+    it("still reports other refusals while coming back", () => {
+      store.session = { code: "ABCD", token: "secret" };
+      connectAndOpen();
+
+      socket().hear({ type: "error", code: "bad-message", message: "Unreadable." });
+
       expect(failures).toHaveLength(1);
     });
 

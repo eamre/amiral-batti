@@ -133,9 +133,12 @@ export class GameClient {
 
   private handleError(code: ErrorCode, message: string): void {
     if (this.isRejoining && code === "no-such-room") {
+      // The page asked for its old seat by itself and the room is gone (the server was restarted,
+      // or the room was forgotten). The player asked for nothing, so there is nothing to complain about.
       this.isRejoining = false;
       this.options.store.clear();
       this.update({ room: undefined, opponentOnline: false });
+      return;
     }
     this.options.listener.failed({ code, message });
   }
