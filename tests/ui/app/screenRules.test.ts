@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canFireNow, screenKindOf, shownBoard, statusOf } from "../../../src/ui/app/screen";
+import { canFireNow, screenKindOf, shownBoard, statusOf } from "../../../src/ui/app/screenRules";
 import { gameView, roomView } from "../fixtures";
 
 describe("shownBoard", () => {

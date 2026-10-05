@@ -1,4 +1,4 @@
-import type { StatusCode } from "../app/screen";
+import type { StatusCode } from "../app/screenRules";
 
 // The line above the board is shared by the room card and the battle, so its words live here.
 

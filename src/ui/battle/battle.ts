@@ -9,7 +9,7 @@ import { h } from "../dom/h";
 import { enemyFleetStatus } from "./fleetStatus";
 import { createFleetsDialog } from "./fleetsDialog";
 import { createFleetStrip } from "./fleetStrip";
-import { canFireNow, shownBoard, statusOf } from "../app/screen";
+import { canFireNow, shownBoard, statusOf } from "../app/screenRules";
 import { statusText } from "../texts/statusText";
 import { battleText, shotText } from "./battleText";
 

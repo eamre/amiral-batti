@@ -1,5 +1,5 @@
 import type { Scheduler } from "../../infrastructure/GameClient";
-import type { BoardSide } from "../app/screen";
+import type { BoardSide } from "../app/screenRules";
 
 /**
  * Decides which board is on the screen, but waits a moment before it changes boards.

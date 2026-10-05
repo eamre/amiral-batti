@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DelayedBoard } from "../../../src/ui/battle/DelayedBoard";
-import type { BoardSide } from "../../../src/ui/app/screen";
+import type { BoardSide } from "../../../src/ui/app/screenRules";
 
 /** A scheduler that does nothing until the test says that time has passed. */
 function fakeScheduler() {
