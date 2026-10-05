@@ -97,10 +97,16 @@ describe("Room", () => {
       expect(room.viewFor("t", NOW).yourName).toBe("A name that is m");
     });
 
-    it("uses a default name when none is given", () => {
-      const room = Room.open("ABCD", DEFAULT_GAME_SETTINGS, { name: "   ", token: "t" });
+    it("refuses to open a room for somebody without a name", () => {
+      expect(errorCodeOf(() => Room.open("ABCD", DEFAULT_GAME_SETTINGS, { name: "   ", token: "t" }))).toBe(
+        "no-name",
+      );
+    });
 
-      expect(room.viewFor("t", NOW).yourName).toBe("Player");
+    it("refuses to let somebody without a name join", () => {
+      const room = Room.open("ABCD", DEFAULT_GAME_SETTINGS, { name: "Emre", token: "t" });
+
+      expect(errorCodeOf(() => room.join({ name: "", token: "u" }))).toBe("no-name");
     });
   });
 

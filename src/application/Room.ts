@@ -8,10 +8,9 @@ import { GameRuleError } from "./GameRuleError";
 import type { GameSettings } from "./GameSettings";
 import { viewFor as gameViewFor } from "./GameView";
 import type { RoomView } from "./RoomView";
+import { MAX_NAME_LENGTH } from "./roomLimits";
 
 const PLAYERS: readonly Player[] = ["first", "second"];
-const MAX_NAME_LENGTH = 16;
-const DEFAULT_NAME = "Player";
 
 /** A person sitting at the table. The token is his secret: whoever knows it, is him. */
 export interface Seat {
@@ -111,7 +110,7 @@ export class Room {
 
     return {
       code: this.code,
-      yourName: this.nameOf(player),
+      yourName: this.seatAt(player).name,
       opponentName: this.state.seats[opponent]?.name,
       youWantRematch: this.state.rematchVotes[player],
       opponentWantsRematch: this.state.rematchVotes[opponent],
@@ -119,8 +118,13 @@ export class Room {
     };
   }
 
-  private nameOf(player: Player): string {
-    return this.state.seats[player]?.name ?? DEFAULT_NAME;
+  private seatAt(player: Player): Seat {
+    const seat = this.state.seats[player];
+
+    if (seat === undefined) {
+      throw new Error(`Nobody sits at the ${player} seat.`);
+    }
+    return seat;
   }
 
   private playerWith(token: string): Player {
@@ -137,8 +141,12 @@ export class Room {
   }
 }
 
+/** A name is trimmed and cut to length. Somebody has to be called something: an empty name is refused. */
 function cleanSeat(seat: Seat): Seat {
   const name = seat.name.trim().slice(0, MAX_NAME_LENGTH);
 
-  return { name: name === "" ? DEFAULT_NAME : name, token: seat.token };
+  if (name === "") {
+    throw new GameRuleError("no-name", "A player needs a name.");
+  }
+  return { name, token: seat.token };
 }

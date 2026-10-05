@@ -8,7 +8,8 @@ export type GameRuleErrorCode =
   | "room-full"
   | "unknown-player"
   | "no-such-room"
-  | "not-in-room";
+  | "not-in-room"
+  | "no-name";
 
 /**
  * A player asked for something the rules do not allow.

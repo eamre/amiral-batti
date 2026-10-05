@@ -2,7 +2,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { createLobby, type LobbyCallbacks } from "../../../src/ui/lobby/lobby";
 
-function lobby(initialName?: string) {
+/** A lobby where a name is already there, as it is for a player who has played before. */
+function lobby(initialName = "Emre") {
   const callbacks = { create: vi.fn(), join: vi.fn() } satisfies LobbyCallbacks;
   const view = createLobby(callbacks, initialName);
   const find = <T extends HTMLElement>(selector: string): T => {
@@ -49,7 +50,7 @@ describe("createLobby: creating a room", () => {
     presetButton("russian").click();
     createButton.click();
 
-    expect(callbacks.create).toHaveBeenCalledWith("", expect.objectContaining({ fleetPreset: "russian" }));
+    expect(callbacks.create).toHaveBeenCalledWith("Emre", expect.objectContaining({ fleetPreset: "russian" }));
   });
 
   it("marks only the chosen fleet as pressed", () => {
@@ -77,7 +78,7 @@ describe("createLobby: creating a room", () => {
     touchingBox.click();
     createButton.click();
 
-    expect(callbacks.create).toHaveBeenCalledWith("", expect.objectContaining({ allowTouching: true }));
+    expect(callbacks.create).toHaveBeenCalledWith("Emre", expect.objectContaining({ allowTouching: true }));
   });
 
   it("sends the name without the spaces around it", () => {
@@ -165,5 +166,33 @@ describe("createLobby: connection", () => {
     view.setOnline(true);
 
     expect(joinButton.disabled).toBe(true);
+  });
+});
+
+describe("createLobby: the name", () => {
+  it("cannot create or join without a name", () => {
+    const { createButton, joinButton, codeField, type } = lobby("");
+    type(codeField, "ABCD");
+
+    expect(createButton.disabled).toBe(true);
+    expect(joinButton.disabled).toBe(true);
+  });
+
+  it("does not count spaces as a name", () => {
+    const { createButton, nameField, type } = lobby("");
+
+    type(nameField, "   ");
+
+    expect(createButton.disabled).toBe(true);
+  });
+
+  it("can create and join as soon as a name is typed", () => {
+    const { createButton, joinButton, nameField, codeField, type } = lobby("");
+    type(codeField, "ABCD");
+
+    type(nameField, "Ayşe");
+
+    expect(createButton.disabled).toBe(false);
+    expect(joinButton.disabled).toBe(false);
   });
 });

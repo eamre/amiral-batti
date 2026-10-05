@@ -2,10 +2,10 @@ import type { RandomSource } from "../domain/random";
 import { randomInt } from "../domain/random";
 import type { GameSettings } from "./GameSettings";
 import { Room, type Seat } from "./Room";
+import { ROOM_CODE_LENGTH } from "./roomLimits";
 
 // No I, O, 0, 1: they are too easy to mix up when a code is read out loud.
 const CODE_ALPHABET = "ABCDEFGHJKLMNPRSTUVYZ23456789";
-const CODE_LENGTH = 4;
 const MAX_CODE_ATTEMPTS = 100;
 
 interface Entry {
@@ -84,7 +84,7 @@ export class RoomRegistry {
   private randomCode(): string {
     let code = "";
 
-    for (let index = 0; index < CODE_LENGTH; index++) {
+    for (let index = 0; index < ROOM_CODE_LENGTH; index++) {
       code += CODE_ALPHABET.charAt(randomInt(this.random, CODE_ALPHABET.length));
     }
     return code;

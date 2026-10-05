@@ -1,11 +1,9 @@
 import { FLEET_PRESET_IDS, type FleetPresetId } from "../../domain/fleetPresets";
+import { MAX_NAME_LENGTH, ROOM_CODE_LENGTH } from "../../application/roomLimits";
 import type { RoomRulesDto } from "../../shared/protocol";
 import { h } from "../dom/h";
 import { fleetSummary } from "./fleetSummary";
 import { lobbyText, presetName } from "./lobbyText";
-
-const CODE_LENGTH = 4;
-const NAME_LENGTH = 16;
 
 export interface LobbyCallbacks {
   create(name: string, rules: RoomRulesDto): void;
@@ -32,12 +30,13 @@ export function createLobby(callbacks: LobbyCallbacks, rememberedName = ""): Lob
       type: "text",
       placeholder: lobbyText.namePlaceholder,
       "aria-label": lobbyText.nameLabel,
-      maxlength: String(NAME_LENGTH),
+      maxlength: String(MAX_NAME_LENGTH),
       autocomplete: "nickname",
       "data-role": "name",
     },
   });
   nameField.value = rememberedName;
+  nameField.addEventListener("input", () => refreshButtons());
 
   const summary = h("p", { class: "hint", attrs: { "data-role": "summary" } });
   const touchingHint = h("p", { class: "hint" });
@@ -79,7 +78,7 @@ export function createLobby(callbacks: LobbyCallbacks, rememberedName = ""): Lob
       type: "text",
       placeholder: lobbyText.codePlaceholder,
       "aria-label": lobbyText.codePlaceholder,
-      maxlength: String(CODE_LENGTH),
+      maxlength: String(ROOM_CODE_LENGTH),
       autocapitalize: "characters",
       autocomplete: "off",
       "data-role": "code",
@@ -118,8 +117,10 @@ export function createLobby(callbacks: LobbyCallbacks, rememberedName = ""): Lob
   }
 
   function refreshButtons(): void {
-    createButton.disabled = !online;
-    joinButton.disabled = !online || codeField.value.length < CODE_LENGTH;
+    const hasName = nameField.value.trim() !== "";
+
+    createButton.disabled = !online || !hasName;
+    joinButton.disabled = !online || !hasName || codeField.value.length < ROOM_CODE_LENGTH;
   }
 
   showChosenFleet();

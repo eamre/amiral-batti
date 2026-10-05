@@ -22,6 +22,7 @@ export const errorText: Record<ErrorCode, string> = {
   "unknown-player": "Oyuncu bulunamadı.",
   "no-such-room": "Böyle bir oda yok.",
   "not-in-room": "Önce bir odaya girmelisin.",
+  "no-name": "Önce adını yaz.",
   "bad-message": "Geçersiz istek.",
 };
 
