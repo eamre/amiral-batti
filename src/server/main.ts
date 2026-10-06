@@ -1,10 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
+import { fileURLToPath } from "node:url";
 import { WebSocketServer, type WebSocket } from "ws";
 import type { Connection } from "./ConnectedPlayers";
 import { GameServer } from "./GameServer";
+import { routeRequest } from "./routeRequest";
 
 const PORT = Number(process.env.PORT ?? 3000);
+/** The built site (`npm run build` writes it); the same address that serves the page also takes the WebSocket. */
+const SITE_FOLDER = fileURLToPath(new URL("../../dist", import.meta.url));
 const MAX_MESSAGE_BYTES = 16 * 1024;
 const TICK_MILLISECONDS = 1_000;
 const SWEEP_MILLISECONDS = 10 * 60 * 1000;
@@ -18,11 +22,12 @@ const game = new GameServer({
 });
 
 const http = createServer((request, response) => {
-  if (request.url === "/healthz") {
-    response.end("ok");
-    return;
-  }
-  response.writeHead(404).end();
+  routeRequest(SITE_FOLDER, request.method, request.url)
+    .then((answer) => response.writeHead(answer.status, answer.headers).end(request.method === "HEAD" ? undefined : answer.body))
+    .catch((error: unknown) => {
+      console.error("Unexpected error while answering a request:", error);
+      response.writeHead(500).end();
+    });
 });
 
 const sockets = new WebSocketServer({ server: http, maxPayload: MAX_MESSAGE_BYTES });
