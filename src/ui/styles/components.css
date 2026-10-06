@@ -120,6 +120,13 @@
   width: 100%;
 }
 
+/* A little narrower than the page, in the middle of it. */
+.button--narrow {
+  display: flex;
+  width: 85%;
+  margin-inline: auto;
+}
+
 .button:disabled {
   opacity: 0.45;
   cursor: not-allowed;

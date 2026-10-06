@@ -123,7 +123,7 @@ export function createBattle(options: BattleOptions): BattleView {
       h(
         "button",
         {
-          class: "button button--primary button--block",
+          class: "button button--primary button--narrow",
           attrs: { type: "button", "data-role": "rematch", disabled: current.youWantRematch },
           on: { click: options.onRematch },
         },

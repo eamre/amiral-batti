@@ -36,7 +36,7 @@ export function createFleetsDialog(): FleetsDialog {
   const open = h(
     "button",
     {
-      class: "button button--block",
+      class: "button button--narrow",
       attrs: { type: "button", "data-role": "fleets-open" },
       on: { click: () => dialog.showModal() },
     },
