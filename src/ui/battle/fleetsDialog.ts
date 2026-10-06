@@ -69,7 +69,8 @@ function figure(name: string, model: BoardModel): HTMLElement {
     "figure",
     { class: "fleets__board" },
     h("figcaption", { class: "fleets__name" }, name),
-    renderBoard(model, { label: name, onFire: ignore }),
+    // The slot lets the style sheet size the board by the room that is left, which a phone needs.
+    h("div", { class: "fleets__slot" }, renderBoard(model, { label: name, onFire: ignore })),
   );
 }
 

@@ -59,6 +59,12 @@ describe("createFleetsDialog", () => {
     expect(boards().map((board) => board.getAttribute("aria-label"))).toEqual(["Senin filon", "Rakibin filosu"]);
   });
 
+  it("gives every board a slot of its own, so the boards can share the height of a phone", () => {
+    const { view } = fleetsDialog();
+
+    expect(view.element.querySelectorAll(".fleets__board > .fleets__slot > .board").length).toBe(2);
+  });
+
   it("draws the ships that were never found on the board of the opponent", () => {
     const { boards } = fleetsDialog();
 

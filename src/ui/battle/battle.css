@@ -82,6 +82,55 @@
 }
 
 /*
+ * Below 900px the two fleets are stacked. There the dialog is as high as the window, and each board
+ * takes the room that is left in its half, the same way the board of the battle does, so nothing scrolls.
+ */
+@media (max-width: 899px) {
+  .dialog.dialog--wide {
+    height: calc(100dvh - 32px);
+    padding: 12px;
+  }
+
+  .dialog.dialog--wide[open] {
+    gap: 8px;
+  }
+
+  .fleets {
+    flex: 1 1 0;
+    min-height: 0;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .fleets__board {
+    min-height: 0;
+    gap: 4px;
+  }
+
+  .fleets__slot {
+    flex: 1 1 0;
+    min-height: 0;
+    container-type: size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fleets__slot > .board {
+    width: min(100cqw, 100cqh);
+    height: min(100cqw, 100cqh);
+  }
+}
+
+/* A phone held sideways is wide but not high: there the fleets sit next to each other. */
+@media (max-width: 899px) and (orientation: landscape) {
+  .fleets {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+}
+
+/*
  * On a phone the enemy fleet sits right under the status card, above the board: the page is as high as
  * the window and the board is limited by the width, so this uses the free space at the bottom better.
  * The order is only changed here; the elements are written in the same order for every window.
