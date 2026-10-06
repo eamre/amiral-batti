@@ -188,6 +188,83 @@ describe("createBattle: the last shot", () => {
   });
 });
 
+describe("createBattle: the ping of a shot", () => {
+  const at = (changes: Partial<ShotDto>): ShotDto => ({
+    shooter: "first",
+    cell: { row: 1, column: 2 },
+    outcome: "miss",
+    wasRandom: false,
+    ...changes,
+  });
+  const rings = (view: { element: HTMLElement }) => view.element.querySelectorAll(".ping");
+
+  it("rings the cell the viewer shot at, on the enemy waters", () => {
+    const { view } = battle();
+
+    view.showShot(at({ shooter: "first" }));
+
+    const ring = view.element.querySelector(".ping");
+    expect(rings(view)).toHaveLength(1);
+    expect(ring?.getAttribute("cx")).toBe("2.5");
+    expect(ring?.getAttribute("cy")).toBe("1.5");
+  });
+
+  it("rings the cell the opponent shot at, on the viewer's own waters", () => {
+    const { view, update, delayIsOver, boardName } = battle();
+    update(opponentsTurn());
+    delayIsOver();
+
+    view.showShot(at({ shooter: "second" }));
+
+    expect(boardName()).toBe("Filon");
+    expect(rings(view)).toHaveLength(1);
+  });
+
+  it("does not ring a shot whose board is not on the screen", () => {
+    const { view } = battle();
+
+    view.showShot(at({ shooter: "second" }));
+
+    expect(rings(view)).toHaveLength(0);
+  });
+
+  it("marks a hit and a sunk ship as hits, and a miss as water", () => {
+    const hit = battle();
+    const sunk = battle();
+    const miss = battle();
+
+    hit.view.showShot(at({ outcome: "hit" }));
+    sunk.view.showShot(at({ outcome: "sunk" }));
+    miss.view.showShot(at({ outcome: "miss" }));
+
+    expect(hit.view.element.querySelector(".ping--hit")).not.toBeNull();
+    expect(sunk.view.element.querySelector(".ping--hit")).not.toBeNull();
+    expect(miss.view.element.querySelector(".ping--hit")).toBeNull();
+  });
+
+  it("goes away after a moment", () => {
+    const { view, delayIsOver } = battle();
+    view.showShot(at({}));
+
+    delayIsOver();
+
+    expect(rings(view)).toHaveLength(0);
+  });
+
+  it("does not take away the ring of a newer shot when the older one is over", () => {
+    const later: (() => void)[] = [];
+    const view = createBattle({ now: () => 1_000, schedule: (action) => later.push(action), onFire: vi.fn(), onRematch: vi.fn() });
+    view.update(roomView(), 1_000);
+    view.showShot(at({ cell: { row: 0, column: 0 } }));
+    view.showShot(at({ cell: { row: 5, column: 5 } }));
+
+    later[0]?.();
+
+    expect(rings(view)).toHaveLength(1);
+    expect(view.element.querySelector(".ping")?.getAttribute("cx")).toBe("5.5");
+  });
+});
+
 describe("createBattle: the enemy fleet", () => {
   it("shows which ships are still afloat", () => {
     const { view } = battle();

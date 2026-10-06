@@ -1,20 +1,22 @@
-import { opponentOf } from "../../domain/Player";
+import { opponentOf, type Player } from "../../domain/Player";
 import type { Scheduler } from "../../infrastructure/clientPorts";
 import type { CellDto, RoomViewDto, ShotDto } from "../../shared/protocol";
 import { enemyWatersModel, ownWatersModel } from "../board/boardModel";
-import { renderBoard } from "../board/boardView";
+import { renderBoard, type Ping } from "../board/boardView";
 import { isUrgent, secondsShown } from "./countdown";
 import { DelayedBoard } from "./DelayedBoard";
 import { h } from "../dom/h";
 import { enemyFleetStatus } from "./fleetStatus";
 import { createFleetsDialog } from "./fleetsDialog";
 import { createFleetStrip } from "./fleetStrip";
-import { canFireNow, shownBoard, statusOf } from "../app/screenRules";
+import { canFireNow, shownBoard, statusOf, type BoardSide } from "../app/screenRules";
 import { statusText } from "../texts/statusText";
 import { battleText, shotText } from "./battleText";
 
 /** How long the board stays as it was after the turn has passed, so the player sees where his shot went. */
 const BOARD_SWITCH_MILLISECONDS = 900;
+/** How long the ring of a shot stays: it must be over before the board changes, or the player misses the end of it. */
+const PING_MILLISECONDS = 800;
 
 export interface BattleOptions {
   readonly now: () => number;
@@ -39,6 +41,8 @@ export function createBattle(options: BattleOptions): BattleView {
   let receivedAt = 0;
   let online = true;
   let message = "";
+  /** The shot that has just landed, until its ring is over. */
+  let freshShot: ShotDto | undefined;
 
   const board = new DelayedBoard(BOARD_SWITCH_MILLISECONDS, options.schedule, () => render());
 
@@ -66,13 +70,26 @@ export function createBattle(options: BattleOptions): BattleView {
         ? renderBoard(enemyWatersModel(game, canFireNow(game, online)), {
             label: battleText.enemyWaters,
             onFire: options.onFire,
+            ping: pingOn("enemy", game.you),
           })
-        : renderBoard(ownWatersModel(game), { label: battleText.ownWaters, onFire: options.onFire }),
+        : renderBoard(ownWatersModel(game), {
+            label: battleText.ownWaters,
+            onFire: options.onFire,
+            ping: pingOn("own", game.you),
+          }),
     );
     fleetSlot.replaceChildren(createFleetStrip(enemyFleetStatus(game)));
     fleets.update(game);
     rematchSlot.replaceChildren(...rematchButton(room));
     showClock();
+  }
+
+  /** The ring of the fresh shot, if that shot landed on the board that is on the screen. */
+  function pingOn(side: BoardSide, you: Player): Ping | undefined {
+    if (freshShot === undefined || boardOfShot(freshShot, you) !== side) {
+      return undefined;
+    }
+    return { cell: freshShot.cell, hit: freshShot.outcome !== "miss" };
   }
 
   function showClock(): void {
@@ -134,6 +151,14 @@ export function createBattle(options: BattleOptions): BattleView {
     showShot(shot) {
       if (room !== undefined) {
         message = shotText(shot, room.game.you, room.opponentName);
+        freshShot = shot;
+        options.schedule(() => {
+          // A newer shot has its own ring, and its own end.
+          if (freshShot === shot) {
+            freshShot = undefined;
+            render();
+          }
+        }, PING_MILLISECONDS);
         render();
       }
     },
@@ -143,4 +168,9 @@ export function createBattle(options: BattleOptions): BattleView {
     },
     tick: showClock,
   };
+}
+
+/** What the viewer shoots lands on the enemy waters; what the opponent shoots lands on his own. */
+function boardOfShot(shot: ShotDto, you: Player): BoardSide {
+  return shot.shooter === you ? "enemy" : "own";
 }

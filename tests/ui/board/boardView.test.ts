@@ -176,3 +176,37 @@ describe("renderBoard: firing", () => {
     expect(onFire).not.toHaveBeenCalled();
   });
 });
+
+describe("renderBoard: the ping of a fresh shot", () => {
+  const model = enemyWatersModel(gameView(), true);
+  const ping = (hit: boolean) =>
+    renderBoard(model, { label: "Düşman suları", onFire: noop, ping: { cell: { row: 2, column: 3 }, hit } }).querySelector(
+      ".ping",
+    );
+
+  it("draws nothing when no shot is fresh", () => {
+    const { board } = enemyBoard();
+
+    expect(board.querySelector(".ping")).toBeNull();
+  });
+
+  it("draws a ring in the middle of the cell that was shot", () => {
+    const ring = ping(false);
+
+    expect(ring?.getAttribute("cx")).toBe("3.5");
+    expect(ring?.getAttribute("cy")).toBe("2.5");
+  });
+
+  it("tells a hit from a miss", () => {
+    expect(ping(true)?.classList.contains("ping--hit")).toBe(true);
+    expect(ping(false)?.classList.contains("ping--hit")).toBe(false);
+  });
+
+  it("lies under the targets, so that it does not take the finger", () => {
+    const board = renderBoard(model, { label: "x", onFire: noop, ping: { cell: { row: 0, column: 0 }, hit: true } });
+    const layers = [...board.children].map((layer) => layer.getAttribute("class"));
+
+    expect(layers.indexOf("ping ping--hit")).toBeLessThan(layers.indexOf("target"));
+  });
+});
+

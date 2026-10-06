@@ -5,14 +5,23 @@ import { svg } from "../dom/svg";
 import { boardLabels, viewBoxOf } from "./boardLabels";
 import { shipGraphic } from "./shipGraphic";
 
+/** A shot that has just landed: the board shows where, for a moment. */
+export interface Ping {
+  readonly cell: CellDto;
+  readonly hit: boolean;
+}
+
 export interface BoardOptions {
   /** Read out by screen readers, since the board itself is only a picture. */
   readonly label: string;
   readonly onFire: (cell: CellDto) => void;
+  readonly ping?: Ping;
 }
 
 const MARK_INSET = 0.37;
 const WATER_RADIUS = 0.12;
+/** The ring starts as wide as a cell; the animation in the stylesheet makes it grow. */
+const PING_RADIUS = 0.5;
 /** How round the corners of the sea are, in cells. */
 const SEA_CORNER = 0.3;
 
@@ -20,7 +29,7 @@ const SEA_CORNER = 0.3;
  * Draws a board as one SVG whose grid is `size` units wide, so a cell is one unit, with its labels around it.
  * It is drawn again from scratch on every change: a hundred cells cost nothing.
  *
- * From bottom to top: labels, sea, grid, ships, marks, targets.
+ * From bottom to top: labels, sea, grid, ships, marks, ping, targets.
  */
 export function renderBoard(model: BoardModel, options: BoardOptions): SVGSVGElement {
   return svg(
@@ -32,6 +41,7 @@ export function renderBoard(model: BoardModel, options: BoardOptions): SVGSVGEle
     ...seaAndGrid(model.size),
     ...model.ships.map((ship) => shipGraphic(ship.cells, ship.sunk ? "sunk" : "afloat", ship.quarterTurns)),
     ...model.cells.filter((cell) => cell.mark !== "none").map(markOf),
+    ...(options.ping === undefined ? [] : [pingOf(options.ping)]),
     ...model.cells.filter((cell) => cell.canFire).map((cell) => target(cell, options.onFire)),
   );
 }
@@ -66,6 +76,13 @@ function markOf(cell: CellModel): SVGElement {
     case "none":
       throw new Error("A cell without a mark is not drawn.");
   }
+}
+
+function pingOf({ cell, hit }: Ping): SVGCircleElement {
+  return svg("circle", {
+    class: hit ? "ping ping--hit" : "ping",
+    attrs: { cx: cell.column + 0.5, cy: cell.row + 0.5, r: PING_RADIUS },
+  });
 }
 
 function cross(cell: CellModel, place: Record<string, number>): SVGGElement {

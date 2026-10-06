@@ -44,6 +44,53 @@
   fill: var(--miss);
 }
 
+/* The ring of a shot that has just landed: it grows out of the cell and fades. */
+.ping {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 0.08;
+  pointer-events: none;
+  /* Grow from the middle of the ring itself, not from the corner of the board. */
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ping 800ms ease-out forwards;
+}
+
+.ping--hit {
+  stroke: var(--hit);
+  fill: var(--hit);
+  fill-opacity: 0.25;
+}
+
+@keyframes ping {
+  from {
+    opacity: 1;
+    transform: scale(0.3);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+@keyframes ping-fade {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* For those who asked their device for less motion: the cell lights up and fades, nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .ping {
+    animation-name: ping-fade;
+  }
+}
+
 /* A cell that can be fired at: invisible until the pointer or the keyboard is on it. */
 .target {
   fill: transparent;
