@@ -39,4 +39,14 @@ describe("createFleetStrip", () => {
 
     expect(carrier?.getAttribute("viewBox")).toBe("0 0 5 1");
   });
+
+  it("tells the stylesheet how many ships there are and how many cells wide they are together, so that the row can be scaled to fit", () => {
+    const ships = strip().querySelector(".fleet__ships");
+
+    expect(ships?.getAttribute("style")).toBe("--count:5;--span:17");
+  });
+
+  it("keeps telling it when a ship has sunk, since the row does not get shorter", () => {
+    expect(strip(boatSunk).querySelector(".fleet__ships")?.getAttribute("style")).toBe("--count:5;--span:17");
+  });
 });

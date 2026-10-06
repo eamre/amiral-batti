@@ -1,5 +1,7 @@
 /* ---------- Enemy fleet strip ---------- */
 .fleet {
+  /* The ships are sized by the width of this card, whatever the window. */
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -16,16 +18,22 @@
   font-weight: 700;
 }
 
+/*
+ * All the ships stay in one row. A cell is 16px, or smaller when the whole fleet would not fit:
+ * the width of the card, less the gaps, shared by the cells of all the ships (`--count` and `--span` come from the script).
+ */
 .fleet__ships {
+  --gap: 8px;
+  --cell: min(16px, calc((100cqw - (var(--count) - 1) * var(--gap)) / var(--span)));
   display: flex;
-  flex-wrap: wrap;
   align-items: flex-end;
-  gap: 10px 14px;
+  gap: var(--gap);
 }
 
 .fleet__ship {
-  width: calc(var(--w) * 16px);
-  height: calc(var(--h) * 16px);
+  flex: none;
+  width: calc(var(--w) * var(--cell));
+  height: calc(var(--h) * var(--cell));
   overflow: visible;
 }
 

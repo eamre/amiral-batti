@@ -16,8 +16,18 @@ export function createFleetStrip(status: readonly FleetStatusEntry[]): HTMLEleme
       h("span", {}, battleText.enemyFleet),
       h("span", { class: "fleet__count" }, battleText.shipsLeft(shipsLeft(status), status.length)),
     ),
-    h("div", { class: "fleet__ships" }, ...status.map(shipIcon)),
+    h("div", { class: "fleet__ships", attrs: { style: rowSize(status) } }, ...status.map(shipIcon)),
   );
+}
+
+/**
+ * What the stylesheet needs to fit the ships in one row: how many there are (for the gaps)
+ * and how many cells wide they are together (for the size of a cell).
+ */
+function rowSize(status: readonly FleetStatusEntry[]): string {
+  const span = status.reduce((total, { shape }) => total + shape.width, 0);
+
+  return `--count:${status.length};--span:${span}`;
 }
 
 function shipIcon({ kind, shape, sunk }: FleetStatusEntry): SVGSVGElement {
