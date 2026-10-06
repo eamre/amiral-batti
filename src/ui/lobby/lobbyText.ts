@@ -12,14 +12,14 @@ export const presetName: Record<FleetPresetId, string> = {
 
 export const lobbyText = {
   nameLabel: "Adın",
-  namePlaceholder: "Adın",
+  namePlaceholder: "Önce adını yaz",
   createTitle: "Yeni oyun kur",
   createButton: "Oda kur",
   touchingLabel: "Gemiler yan yana olabilsin",
   joinTitle: "Odaya katıl",
   codePlaceholder: "ODA KODU",
   joinButton: "Katıl",
-  nameHint: "Oda kurmak ya da katılmak için önce adını yaz.",
+  nameNeeded: "Oda kurmak ya da katılmak için önce adını yaz.",
   joinHint: "Katılırken kurallar odayı kurandan gelir.",
   summary: ({ ships, cells }: FleetSummary): string => `${ships} gemi, ${cells} kare`,
   touchingLockedHint: "Rus filosunda gemiler birbirine değemez; bu kural değişmez.",
