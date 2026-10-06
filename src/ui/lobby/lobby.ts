@@ -3,7 +3,8 @@ import { MAX_NAME_LENGTH, ROOM_CODE_LENGTH } from "../../application/roomLimits"
 import type { RoomRulesDto } from "../../shared/protocol";
 import { h } from "../dom/h";
 import { fleetSummary } from "./fleetSummary";
-import { lobbyText, presetName } from "./lobbyText";
+import { presetName } from "../texts/fleetText";
+import { lobbyText } from "./lobbyText";
 
 export interface LobbyCallbacks {
   create(name: string, rules: RoomRulesDto): void;

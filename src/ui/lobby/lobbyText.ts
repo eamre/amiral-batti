@@ -1,14 +1,6 @@
-import type { FleetPresetId } from "../../domain/fleetPresets";
 import type { FleetSummary } from "./fleetSummary";
 
 // The words of the lobby. Every word the player reads is in a texts file; the rest of the code deals in codes.
-// The `Record` types make the compiler ask for a text whenever a new code is added.
-
-export const presetName: Record<FleetPresetId, string> = {
-  classic: "Klasik",
-  russian: "Rus",
-  standard: "Standart",
-};
 
 export const lobbyText = {
   nameLabel: "Adın",

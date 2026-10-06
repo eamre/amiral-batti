@@ -51,4 +51,26 @@ describe("createRoomCard", () => {
     expect(find("status")?.textContent).toBe("Ayse filosunu düzenliyor…");
     expect(find("code")).toBeNull();
   });
+
+  it("tells the rules of the room, so the one who joined knows what was chosen", () => {
+    const { find } = card(roomView({ game: placing }));
+
+    expect(find("rules")?.textContent).toBe("Filo: Klasik · Gemiler yan yana olamaz");
+  });
+
+  it("names the fleet that was chosen", () => {
+    const russian = gameView({ phase: "placing", settings: { boardSize: 10, fleetPreset: "russian", allowTouching: false, turnSeconds: 20 } });
+
+    expect(card(roomView({ game: russian })).find("rules")?.textContent).toBe("Filo: Rus · Gemiler yan yana olamaz");
+  });
+
+  it("tells when the ships may touch", () => {
+    const touching = gameView({ phase: "placing", settings: { boardSize: 10, fleetPreset: "standard", allowTouching: true, turnSeconds: 20 } });
+
+    expect(card(roomView({ game: touching })).find("rules")?.textContent).toBe("Filo: Standart · Gemiler yan yana olabilir");
+  });
+
+  it("tells the rules to the one who made the room as well, while he waits", () => {
+    expect(card().find("rules")?.textContent).toBe("Filo: Klasik · Gemiler yan yana olamaz");
+  });
 });

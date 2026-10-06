@@ -5,6 +5,8 @@ export const roomText = {
   code: "Oda kodu",
   send: "Bu kodu arkadaşına söyle ya da gönder.",
   copy: "Kopyala",
+  rules: (fleet: string, mayTouch: boolean): string =>
+    `Filo: ${fleet} · ${mayTouch ? "Gemiler yan yana olabilir" : "Gemiler yan yana olamaz"}`,
 };
 
 export const leaveText = {
