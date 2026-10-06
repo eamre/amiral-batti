@@ -26,7 +26,7 @@
 .board__grid {
   fill: none;
   stroke: var(--sea-line);
-  stroke-width: 0.04;
+  stroke-width: 0.05;
 }
 
 .mark--hit line {
